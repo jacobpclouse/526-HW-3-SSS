@@ -1,0 +1,3 @@
+What should be the prime field when you are implimenting secret sharing on image data?
+
+251 (this is close enough that our eyes cant tell the difference)
