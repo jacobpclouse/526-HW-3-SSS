@@ -1,0 +1,23 @@
+To implement Shamir's Secret Sharing (SSS) scheme for images, we need to follow the following steps:
+
+1) Read an image file and obtain its pixel data without changing the header information. The header length for BMP file format is 54 bytes.
+2) Divide the pixel data into n shares using the SSS scheme, where n is the number of shares required.
+3) Save each share as a separate file and store them securely.
+4) To reconstruct the original image, collect any k shares out of n, where k is the minimum number of shares required to reconstruct the original image as per the SSS scheme.
+5) Combine the k shares to obtain the original pixel data, and then save the original image.
+
+
+
+To demonstrate the homomorphic properties of SSS scheme using the image downscaling operation, we need to follow the following steps:
+
+1) Read an image file and obtain its pixel data without changing the header information.
+2) Apply the downscale method on the pixel data to obtain a downscaled image.
+3) Divide the pixel data of the original image and the downscaled image into n shares using the SSS scheme, where n is the number of shares required.
+4) Apply the downscale method on each share to obtain the downscaled shares.
+5) Collect any k downscaled shares out of n, where k is the minimum number of shares required to reconstruct the downscaled image as per the SSS scheme.
+6) Reconstruct the downscaled image using the k downscaled shares.
+7) Calculate the mean average error between the downscaled image and the reconstructed downscaled image using the provided equation.
+8) Report the output of each step and make observations.
+
+
+Note that in both cases, we need to use a programming language capable of image processing, such as Python with the Pillow library or Matlab, to implement the required operations.
