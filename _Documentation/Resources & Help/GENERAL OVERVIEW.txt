@@ -1,0 +1,12 @@
+To implement (3, 5) Shamir's Secret Sharing Scheme for images, you can follow these general steps:
+
+1) Read the BMP image file into memory, ignoring the header bytes. You can use any BMP image of your choice.
+2) Split the image data into three equal-sized parts, each represented as a byte array.
+3) Use Shamir's Secret Sharing Scheme to create five shares from the three image parts. You will need to implement the algorithm for generating shares and reconstructing the secret.
+4) Save the five shares as separate files, each containing one share of the image.
+5) To reconstruct the original image, read any three of the five shares from the files and use them to reconstruct the three original image parts using the Shamir's Secret Sharing Scheme algorithm.
+6) Combine the three image parts into one complete image, by concatenating them in the order they were split.
+7) Save the reconstructed image as a BMP file, including the original header bytes.
+8) Display the original image and the reconstructed image to show that the reconstruction was successful.
+
+It is important to note that the implementation details may vary depending on the programming language and libraries used. You will need to use a language that supports reading and writing binary files, and implement the Shamir's Secret Sharing Scheme algorithm, which involves polynomial arithmetic and modulo operations.
