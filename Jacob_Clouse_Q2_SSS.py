@@ -37,7 +37,9 @@ def readInImage(ImageToRead):
 def downscaleImage(InputImageName):
     print(f"* ---- Reading Image: {InputImageName} ---- *")
     # Read image - PIL Library
-    imageReadInComputer = Image.open(InputImageName)
+    # imageReadInComputer = Image.open(InputImageName)
+    imageReadInComputer = Image.open(InputImageName).convert('RGB')
+
     # Get Image Size / Dimensions
     imageWidth, imageHeight = imageReadInComputer.size
 
@@ -62,6 +64,40 @@ def downscaleImage(InputImageName):
     if IsThereRemainder != 0:
         needToAdd = (4 - IsThereRemainder)
         print(f"Need to add: {needToAdd}")
+
+# REDO FOLLOWING: ---------
+    # convertedImage = Image.open(InputImageName).convert('RGB')
+
+    # Calculate the size of the output image
+    newWidth = imageWidth // 2
+    newHeight = imageHeight // 2
+
+    # Create a new image with the calculated size
+    outputImage = Image.new('RGB', (newWidth, newHeight))
+
+    # Loop through each pixel of the output image
+    for x in range(newWidth):
+        for y in range(newHeight):
+            
+            # Calculate the average of the four pixels in the input image
+            r = g = b = 0
+            for i in range(2):
+                for j in range(2):
+                    px = imageReadInComputer.getpixel((2*x+i, 2*y+j))
+                    r += px[0]
+                    g += px[1]
+                    b += px[2]
+            r //= 4
+            g //= 4
+            b //= 4
+            
+            # Set the pixel value in the output image
+            outputImage.putpixel((x, y), (r, g, b))
+
+    # Save the output image
+    outputImage.save('output_image.jpg')
+
+    # END REDO SECTION: -----
 
 
 # --- Function to save string to file  ---
