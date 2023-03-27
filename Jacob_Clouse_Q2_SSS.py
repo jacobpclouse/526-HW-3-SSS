@@ -66,7 +66,11 @@ def downscaleImage(InputImageName):
         print(f"Need to add: {needToAdd}")
 
 # REDO FOLLOWING: ---------
-    # convertedImage = Image.open(InputImageName).convert('RGB')
+    # SOURCES for following code:
+    # Python PIL | getpixel() Method: https://www.geeksforgeeks.org/python-pil-getpixel-method/
+    # How to manipulate the pixel values of an image using Python ?: https://www.geeksforgeeks.org/how-to-manipulate-the-pixel-values-of-an-image-using-python/
+    # How to find out average pixel value of an image, scanning it from top and bottom?: https://stackoverflow.com/questions/53935359/how-to-find-out-average-pixel-value-of-an-image-scanning-it-from-top-and-bottom
+    
 
     # Calculate the size of the output image
     newWidth = imageWidth // 2
