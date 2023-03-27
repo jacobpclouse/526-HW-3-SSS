@@ -9,3 +9,7 @@ ICSI 526 Homework 3 - Spring 2023 - Shamir Secret Sharing
 - How to find out the dimensions of an image: https://datascience.stackexchange.com/questions/98437/how-to-find-out-the-dimensions-of-an-image#:~:text=To%20get%20the%20image%20shape,of%20channels%20for%20each%20pixel.
 - EXTRACTING PIXEL VALUES OF AN IMAGE IN PYTHON: https://www.hackerearth.com/practice/notes/extracting-pixel-values-of-an-image-in-python/
 - Python PIL | getpixel() Method: https://www.geeksforgeeks.org/python-pil-getpixel-method/
+- Python type() Function [With Easy Examples]: https://www.digitalocean.com/community/tutorials/python-type
+- Python Program to Write List to File: https://www.scaler.com/topics/python-write-list-to-file/
+- How to manipulate the pixel values of an image using Python ?: https://www.geeksforgeeks.org/how-to-manipulate-the-pixel-values-of-an-image-using-python/
+- Generate average image using Python and PIL (Python Image Library): https://pythonmatplotlibtips.blogspot.com/2018/01/generate-average-image-using-python-and-PIL.html
