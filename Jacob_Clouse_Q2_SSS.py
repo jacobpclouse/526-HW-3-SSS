@@ -4,10 +4,35 @@
 # Importing Libraries / Modules 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+from PIL import Image # used to read in an image
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Functions
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+# --- Function read in an image ---
+# SOURCE: https://www.geeksforgeeks.org/reading-images-in-python/
+def readInImage(ImageToRead):
+    print(f"Reading Image: {ImageToRead}")
+
+    # Read image
+    img = Image.open(ImageToRead)
+    
+    # Output Images
+    img.show()
+    # prints format of image
+    print(img.format)
+    # prints mode of image
+    print(img.mode)
+
+
+
+
+# --- Function downscale the image ---
+def downscaleImage(ImageName):
+    print(f"Downscaling: {ImageName}")
+
+
 
 # --- Function to print out my Logo ---
 def myLogo():
@@ -26,4 +51,5 @@ def myLogo():
 # MAIN 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+readInImage('bitmap_guts.bmp')
 myLogo()
