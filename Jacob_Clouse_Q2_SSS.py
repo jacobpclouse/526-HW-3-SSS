@@ -43,13 +43,14 @@ def downscaleImage(InputImageName):
 
     # Get Pixel Data
     imageNumPixels = imageWidth * imageHeight
-    imagePixels = list(imageReadInComputer.getdata())
+    imagePixels = list(imageReadInComputer.getdata()) # this is too large to print, fills screen 
     
 
     print(f"Original Width: {imageWidth}")
     print(f"Original Height: {imageHeight}")
     print(f"Original # of Pixels (WIDTH x HEIGHT): {imageNumPixels}")
     # print(f"Original Pixel Values: {imagePixels}")
+    # save pixel values to text file - analyze
 
 
 
