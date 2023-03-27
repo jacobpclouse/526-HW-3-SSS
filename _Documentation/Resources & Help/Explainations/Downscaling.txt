@@ -1,0 +1,11 @@
+To downscale an input image I using the described method, you can follow these steps:
+
+1) Define the dimensions of the downscaled image Io as half of the dimensions of the original image I. For example, if the dimensions of I are (width, height), then the dimensions of I o will be (width/2, height/2).
+
+2) Loop through every other pixel in both the x and y dimensions of I, starting at (0,0). For each pixel, compute the average of the four pixels in I that surround it, which are at positions (2i, 2j), (2i+1, 2j), (2i, 2j+1), and (2i+1, 2j+1), where i and j are the x and y coordinates of the current pixel in I o.
+
+3) Assign the computed average value to the corresponding pixel in I o at position (i,j).
+
+4) Repeat steps 2 and 3 for all pixels in I o, until all pixels in I o have been assigned an average value from I.
+
+Note that this method only works for downscaling images by a factor of two in both the x and y dimensions. If you want to downscale an image by a different factor or using a different method, different steps would need to be taken.

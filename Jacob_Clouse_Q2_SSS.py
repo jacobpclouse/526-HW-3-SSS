@@ -1,5 +1,11 @@
 # This Python Program was written on Linux Mint and Windows 10 using VScode, your milage may vary on OS and configuration.
 
+# **NOTES:**
+# --- if we have probs with downscaling and images not having the correct number of pixels, we could potentally just scale them up to a power of 100 and then downscale them, it will work, need to talk with pradeep about this
+# OR we can just have a check to make sure that there are a x4 values in each comparision beforehand, and IF NOT it will just fill take the original value and use that
+
+
+
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Importing Libraries / Modules 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -10,27 +16,46 @@ from PIL import Image # used to read in an image
 # Functions
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-# --- Function read in an image ---
+# --- Function read in an image --- DO NOT USE
 # SOURCE: https://www.geeksforgeeks.org/reading-images-in-python/
 def readInImage(ImageToRead):
     print(f"Reading Image: {ImageToRead}")
-
     # Read image
-    img = Image.open(ImageToRead)
-    
+    imgInComputer = Image.open(ImageToRead)
     # Output Images
-    img.show()
+    imgInComputer.show()
     # prints format of image
-    print(img.format)
+    print(imgInComputer.format)
     # prints mode of image
-    print(img.mode)
-
+    print(imgInComputer.mode)
+    # returning the value to output - 
+    return imgInComputer
 
 
 
 # --- Function downscale the image ---
-def downscaleImage(ImageName):
-    print(f"Downscaling: {ImageName}")
+def downscaleImage(InputImageName):
+    print(f"* ---- Reading Image: {InputImageName} ---- *")
+    # Read image - PIL Library
+    imageReadInComputer = Image.open(InputImageName)
+    # Get Image Size / Dimensions
+    imageWidth, imageHeight = imageReadInComputer.size
+
+    # Get Pixel Data
+    imageNumPixels = imageWidth * imageHeight
+    imagePixels = list(imageReadInComputer.getdata())
+    
+
+    print(f"Original Width: {imageWidth}")
+    print(f"Original Height: {imageHeight}")
+    print(f"Original # of Pixels (WIDTH x HEIGHT): {imageNumPixels}")
+    # print(f"Original Pixel Values: {imagePixels}")
+
+
+
+    print(f"* ---- Downscaling: {InputImageName}  ---- *")
+
+
 
 
 
@@ -51,5 +76,9 @@ def myLogo():
 # MAIN 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-readInImage('bitmap_guts.bmp')
+inputImage = 'bitmap_guts.bmp'
+# outputImage = readInImage(inputImage)
+downscaleImage(inputImage)
+
+
 myLogo()
