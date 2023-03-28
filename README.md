@@ -1,6 +1,9 @@
 # 526-HW-3-SSS
 ICSI 526 Homework 3 - Spring 2023 - Shamir Secret Sharing
 
+# INFO:
+If you read an image as a byte stream, it reads the header file
+
 # Resources Used:
 - Python Image Resize With Pillow and OpenCV: https://cloudinary.com/guides/bulk-image-resize/python-image-resize-with-pillow-and-opencv
 - How to read bmp file header in python?: https://stackoverflow.com/questions/47003833/how-to-read-bmp-file-header-in-python
