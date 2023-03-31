@@ -19,3 +19,11 @@ with open("path/to/image.bmp", "rb") as f:
     header = f.read(54)
 
 '''
+
+# read everything AFTER 54th byte
+with open("path/to/image.jpg", "rb") as f:
+    # Seek to byte 54
+    f.seek(54)
+    
+    # Read the remaining bytes (image data)
+    image_data = f.read()
