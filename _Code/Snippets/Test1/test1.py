@@ -67,9 +67,12 @@ reconstruct_image_shamir(["image_share_0.bmp", "image_share_1.bmp"])
 
 
 
-'''
-Error: (thinks its because its not 251, need to adjust):
-----
+'''Traceback (most recent call last):
+  File "test1.py", line 66, in <module>
+    reconstruct_image_shamir(["image_share_0.bmp", "image_share_1.bmp"])
+  File "test1.py", line 54, in reconstruct_image_shamir
+    p_j = (p_j * (0 - x_m) * pow(x_j - x_m, -1, 256)) % 256
+ValueError: base is not invertible for the given modulus
 Traceback (most recent call last):
   File "test1.py", line 66, in <module>
     reconstruct_image_shamir(["image_share_0.bmp", "image_share_1.bmp"])
