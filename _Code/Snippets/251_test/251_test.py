@@ -51,7 +51,8 @@ def reconstruct_image_shamir(image_share_paths):
             for m in range(n):
                 if m != j:
                     x_m, y_m = shares[m][i]
-                    p_j = (p_j * (0 - x_m) * pow(x_j - x_m, -1, 251)) % 251
+                    if x_j != x_m:
+                        p_j = (p_j * (0 - x_m) * pow(x_j - x_m, -1, 256)) % 256
             img_data[i*n*3 + j*3 + 0] = y_j
             img_data[i*n*3 + j*3 + 1] = 0
             img_data[i*n*3 + j*3 + 2] = 0
