@@ -146,15 +146,15 @@ def myLogo():
 
 # myLogo()
 
-inputImage = 'bitmap_guts.bmp'
-newName = 'Only250.bmp'
-max
+inputImage = 'grayscale.bmp'
+new250Image = 'Only250.bmp'
+max_250(inputImage,new250Image)
 # header_data, image_data = split_image_shamir(inputImage)
 n = 5
 k = 2
 
 # Encrypt the image
-shares = encrypt_image(inputImage, n, k)
+shares = encrypt_image(new250Image, n, k)
 # print(shares)
 
 # Decrypt the image
