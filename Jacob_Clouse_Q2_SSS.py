@@ -9,19 +9,15 @@
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Importing Libraries / Modules 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-from PIL import Image 
-import numpy as np # used to read in an image
 import random
-from decimal import Decimal
-
+from PIL import Image
 
 
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Variables
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-PRIMEBOI = 31
+
 
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -30,21 +26,18 @@ PRIMEBOI = 31
 
 # --- Function to read in an image --- DO NOT USE
 # SOURCE: https://www.geeksforgeeks.org/reading-images-in-python/
-def readInImage(ImageToRead):
-    print(f"Reading Image: {ImageToRead}")
-    # Load the image
-    with open(ImageToRead, "rb") as f:
-        header = f.read(54) # BMP header is 54 bytes long
-        img_bytes = f.read()
-    img_data = np.frombuffer(img_bytes, dtype=np.uint8)
 
-    return header, img_data
 
 
 
 # --- Function to generate shares ---
 # SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/#
 def generate_shares(secret, n, k):
+    """
+    Generate n shares of the secret using a 2-out-of-n Shamir Secret Sharing scheme,
+    where any k shares can be used to reconstruct the secret.
+    Returns a list of tuples, where each tuple is a share in the form (x, y).
+    """
     if k > n:
         raise ValueError("k must be less than or equal to n")
     coefficients = [secret] + [random.randint(1, 2**32-1) for _ in range(k-1)]
@@ -59,7 +52,11 @@ def generate_shares(secret, n, k):
 
 # --- Function to get shares and put them back together ---
 # SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/#
-def put_humpty_dumpty_back_together(shares):
+def reconstruct_secret(shares):
+    """
+    Reconstruct the secret from a list of shares using Lagrange interpolation.
+    Returns the reconstructed secret.
+    """
     if len(shares) < 2:
         raise ValueError("At least 2 shares are required to reconstruct the secret")
     x_values, y_values = zip(*shares)
@@ -74,90 +71,36 @@ def put_humpty_dumpty_back_together(shares):
     return secret
 
 
-# # --- Function downscale the image ---
-# def downscaleImage(InputImageName):
-#     print(f"* ---- Reading Image: {InputImageName} ---- *")
-#     # Read image - PIL Library
-#     # imageReadInComputer = Image.open(InputImageName)
-#     imageReadInComputer = Image.open(InputImageName).convert('RGB')
-
-#     # Get Image Size / Dimensions
-#     imageWidth, imageHeight = imageReadInComputer.size
-
-#     # Get Pixel Data
-#     imageNumPixels = imageWidth * imageHeight
-#     imagePixels = list(imageReadInComputer.getdata()) # this is too large to print, fills screen 
-    
-
-#     print(f"Original Width: {imageWidth}")
-#     print(f"Original Height: {imageHeight}")
-#     print(f"Original # of Pixels (WIDTH x HEIGHT): {imageNumPixels}")
-#     # print(f"Original Pixel Values: {imagePixels}") # this is too large to print, fills screen 
-
-#     # save pixel values to text file - analyze
-#     # save_String(imagePixels,f'{InputImageName}_ImagePixelValues') 
 
 
-#     print(f"* ---- Downscaling: {InputImageName}  ---- *")
-#     # get mod 4 of pixel values 
-#     IsThereRemainder = imageNumPixels % 4
-#     print(f"Remainder: {IsThereRemainder}")
-#     if IsThereRemainder != 0:
-#         needToAdd = (4 - IsThereRemainder)
-#         print(f"Need to add: {needToAdd}")
-
-# # REDO FOLLOWING: ---------
-
-#     ''' ASK IF YOU ARE DOING DOWNSIZING RIGHT!!!! '''
-#     # SOURCES for following code:
-#     # Python PIL | getpixel() Method: https://www.geeksforgeeks.org/python-pil-getpixel-method/
-#     # How to manipulate the pixel values of an image using Python ?: https://www.geeksforgeeks.org/how-to-manipulate-the-pixel-values-of-an-image-using-python/
-#     # How to find out average pixel value of an image, scanning it from top and bottom?: https://stackoverflow.com/questions/53935359/how-to-find-out-average-pixel-value-of-an-image-scanning-it-from-top-and-bottom
 
 
-#     # Calculate the size of the output image
-#     newWidth = imageWidth // 2
-#     newHeight = imageHeight // 2
 
-#     # Create a new image with the calculated size
-#     outputImage = Image.new('RGB', (newWidth, newHeight))
-
-#     # Loop through each pixel of the output image
-#     for x in range(newWidth):
-#         for y in range(newHeight):
-            
-#             # Calculate the average of the four pixels in the input image
-#             r = g = b = 0
-#             for i in range(2):
-#                 for j in range(2):
-#                     px = imageReadInComputer.getpixel((2*x+i, 2*y+j))
-#                     r += px[0]
-#                     g += px[1]
-#                     b += px[2]
-#             r //= 4
-#             g //= 4
-#             b //= 4
-            
-#             # Set the pixel value in the output image
-#             outputImage.putpixel((x, y), (r, g, b))
-
-#     # Save the output image
-#     outputImage.save('output_image.jpg')
-
-#     # END REDO SECTION: -----
+# --- Function open the image and get shares --- #
+def encrypt_image(image_path, n, k):
+    """
+    Encrypt an image using Shamir Secret Sharing.
+    Returns a list of n shares.
+    """
+    with open(image_path, "rb") as f:
+        image_data = f.read()
+    binary_data = "".join(format(byte, "08b") for byte in image_data)
+    shares = generate_shares(int(binary_data, 2), n, k)
+    return shares
 
 
-# # --- Function to save string to file  ---
-# def save_String(textValues, nameOfFile):
-#     print(type(textValues))
-#     if type(textValues) == list:
-#         with open(f"{nameOfFile}_List.txt", "w") as text_file:
-#             for item in textValues:
-#                 text_file.write(str(item) + "\n")
-#     elif type(textValues) == str:
-#         with open(f"{nameOfFile}_Str.txt", "w") as text_file:
-#             text_file.write(textValues)
-
+# --- Function open the shares and return the image --- #
+def decrypt_image(shares):
+    """
+    Decrypt an image using Shamir Secret Sharing.
+    Returns the decrypted image data as a bytes object.
+    """
+    secret = reconstruct_secret(shares)
+    binary_data = bin(secret)[2:]
+    padding = 8 - len(binary_data) % 8
+    binary_data = "0" * padding + binary_data
+    bytes_data = bytes(int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8))
+    return bytes_data
 
 # --- Function to print out my Logo ---
 def myLogo():
@@ -179,12 +122,15 @@ def myLogo():
 # myLogo()
 
 inputImage = 'bitmap_guts.bmp'
-
-secret = 41
 n = 5
 k = 2
-shares = generate_shares(secret, n, k)
-print(shares)
 
-reconstructed_secret = put_humpty_dumpty_back_together(shares[:k])
-print(reconstructed_secret)
+# Encrypt the image
+shares = encrypt_image(inputImage, n, k)
+
+# Decrypt the image
+decrypted_data = decrypt_image(shares)
+
+# Save the decrypted image to a file
+with open("decrypted_image.bmp", "wb") as f:
+    f.write(decrypted_data)
