@@ -16,3 +16,5 @@ If you read an image as a byte stream, it reads the header file
 - Python Program to Write List to File: https://www.scaler.com/topics/python-write-list-to-file/
 - How to manipulate the pixel values of an image using Python ?: https://www.geeksforgeeks.org/how-to-manipulate-the-pixel-values-of-an-image-using-python/
 - Generate average image using Python and PIL (Python Image Library): https://pythonmatplotlibtips.blogspot.com/2018/01/generate-average-image-using-python-and-PIL.html
+- Implementing Shamir’s Secret Sharing Scheme in Python Geeks for Geeks: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/#
+
