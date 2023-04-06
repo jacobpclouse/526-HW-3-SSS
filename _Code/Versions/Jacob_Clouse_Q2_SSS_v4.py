@@ -40,11 +40,13 @@ def readInImage(ImageToRead):
 
     return header, img_data
 
-
-
 # --- Function to generate shares ---
-# SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/#
 def generate_shares(secret, n, k):
+    """
+    Generate n shares of the secret using a 2-out-of-n Shamir Secret Sharing scheme,
+    where any k shares can be used to reconstruct the secret.
+    Returns a list of tuples, where each tuple is a share in the form (x, y).
+    """
     if k > n:
         raise ValueError("k must be less than or equal to n")
     coefficients = [secret] + [random.randint(1, 2**32-1) for _ in range(k-1)]
@@ -56,10 +58,12 @@ def generate_shares(secret, n, k):
     return shares
 
 
-
 # --- Function to get shares and put them back together ---
-# SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/#
 def put_humpty_dumpty_back_together(shares):
+    """
+    Reconstruct the secret from a list of shares using Lagrange interpolation.
+    Returns the reconstructed secret.
+    """
     if len(shares) < 2:
         raise ValueError("At least 2 shares are required to reconstruct the secret")
     x_values, y_values = zip(*shares)
