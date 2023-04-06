@@ -10,15 +10,24 @@ def split_image_shamir(image_path, k, n):
         img_bytes = f.read()
     img_data = np.frombuffer(img_bytes, dtype=np.uint8)
 
+
+
     # Split the image data into k shares using Shamir's Secret Sharing algorithm
     x_values = list(range(1, n+1))
+    print(f"x_values: {x_values}")
     y_values = [img_data[i::3] for i in range(3)]
+    print(f"Y values all: {y_values}")
+    # print(f"y_values[0]: {y_values[0]}")
+    # print(f"y_values[1]: {y_values[1]}")
+    # print(f"y_values[2]: {y_values[2]}")
     shares = []
     for y in y_values:
         coeffs = [random.randint(1, 256) for i in range(k-1)]
         coeffs.insert(0, int.from_bytes(y, byteorder='big'))
         share = [(x, sum(c * x**i for i, c in enumerate(coeffs)) % 256) for x in x_values]
         shares.append(share)
+
+
 
     # Save each share as a separate BMP image file
     for i, share in enumerate(shares):
@@ -64,9 +73,10 @@ def reconstruct_image_shamir(image_share_paths):
 
 
 # ---
-split_image_shamir("1.bmp", 2, 3)
+# split_image_shamir("640x480Bitmap.bmp", 2, 3)
+split_image_shamir("640x480Bitmap.bmp", 3, 4)
 
-reconstruct_image_shamir(["image_share_0.bmp", "image_share_1.bmp"])
+reconstruct_image_shamir(["image_share_2.bmp", "image_share_1.bmp"])
 
 
 
