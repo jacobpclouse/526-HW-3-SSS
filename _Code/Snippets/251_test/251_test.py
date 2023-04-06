@@ -15,9 +15,9 @@ def split_image_shamir(image_path, k, n):
     y_values = [img_data[i::3] for i in range(3)]
     shares = []
     for y in y_values:
-        coeffs = [random.randint(1, 251) for i in range(k-1)]
+        coeffs = [random.randint(1, 256) for i in range(k-1)]
         coeffs.insert(0, int.from_bytes(y, byteorder='big'))
-        share = [(x, sum(c * x**i for i, c in enumerate(coeffs)) % 251) for x in x_values]
+        share = [(x, sum(c * x**i for i, c in enumerate(coeffs)) % 256) for x in x_values]
         shares.append(share)
 
     # Save each share as a separate BMP image file
@@ -53,6 +53,8 @@ def reconstruct_image_shamir(image_share_paths):
                     x_m, y_m = shares[m][i]
                     if x_j != x_m:
                         p_j = (p_j * (0 - x_m) * pow(x_j - x_m, -1, 256)) % 256
+                # else:
+                #     p_j = p_j 
             img_data[i*n*3 + j*3 + 0] = y_j
             img_data[i*n*3 + j*3 + 1] = 0
             img_data[i*n*3 + j*3 + 2] = 0
@@ -62,7 +64,7 @@ def reconstruct_image_shamir(image_share_paths):
 
 
 # ---
-#split_image_shamir("1.bmp", 2, 3)
+split_image_shamir("1.bmp", 2, 3)
 
 reconstruct_image_shamir(["image_share_0.bmp", "image_share_1.bmp"])
 
