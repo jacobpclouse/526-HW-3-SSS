@@ -163,8 +163,3 @@ decrypted_data = decrypt_image(shares)
 # Save the decrypted image to a file
 with open("decrypted_image.bmp", "wb") as f:
     f.write(decrypted_data)
-
-
-# 1 - get it so that the header info is opened as well in the data
-# 2 - look at the decrypt data and the save data and then append the new data to the shares,
-# 3 - try opening the shares, split off the header, recombine and decrypted, save with new header
