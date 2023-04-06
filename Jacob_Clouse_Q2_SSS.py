@@ -13,7 +13,6 @@ import random
 from PIL import Image
 
 
-
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Variables
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -24,10 +23,31 @@ from PIL import Image
 # Functions
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-# --- Function to read in an image --- DO NOT USE
-# SOURCE: https://www.geeksforgeeks.org/reading-images-in-python/
+# --- Function to read in an image and adjust to only 250 max values --- 
+# SOURCE: http://paulbourke.net/dataformats/bitmaps/
+def max_250(origImage,newOutputName):
+    # Open the image file
+    image = Image.open(origImage)
+
+    # Convert the image to grayscale
+    image = image.convert("L")
+
+    # Get the pixel data
+    pixels = list(image.getdata())
+
+    # Modify the pixel values
+    new_pixels = [min(pixel, 250) for pixel in pixels]
+
+    # Create a new image object with the modified pixel values
+    new_image = Image.new(image.mode, image.size)
+    new_image.putdata(new_pixels)
+
+    # Save the new image as a bitmap file
+    new_image.save(newOutputName)
 
 
+
+# before you generate shares and make max value 250 (if it is ) 
 
 
 # --- Function to generate shares ---
@@ -40,6 +60,7 @@ def generate_shares(secret, n, k):
     """
     if k > n:
         raise ValueError("k must be less than or equal to n")
+    
     coefficients = [secret] + [random.randint(1, 2**32-1) for _ in range(k-1)]
     shares = []
     for i in range(n):
@@ -83,8 +104,12 @@ def encrypt_image(image_path, n, k):
     Returns a list of n shares.
     """
     with open(image_path, "rb") as f:
+        # header 
         image_data = f.read()
+    print(image_data)
     binary_data = "".join(format(byte, "08b") for byte in image_data)
+    # go through each and every byte other than data and if its greater than 
+    # print(binary_data)
     shares = generate_shares(int(binary_data, 2), n, k)
     return shares
 
@@ -122,11 +147,15 @@ def myLogo():
 # myLogo()
 
 inputImage = 'bitmap_guts.bmp'
+newName = 'Only250.bmp'
+max
+# header_data, image_data = split_image_shamir(inputImage)
 n = 5
 k = 2
 
 # Encrypt the image
 shares = encrypt_image(inputImage, n, k)
+# print(shares)
 
 # Decrypt the image
 decrypted_data = decrypt_image(shares)
