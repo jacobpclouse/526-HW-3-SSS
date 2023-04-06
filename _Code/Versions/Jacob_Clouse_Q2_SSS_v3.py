@@ -41,41 +41,54 @@ def readInImage(ImageToRead):
     return header, img_data
 
 
-def generate_shares(secret, n, k):
-    """
-    Generate n shares of the secret using a 2-out-of-n Shamir Secret Sharing scheme,
-    where any k shares can be used to reconstruct the secret.
-    Returns a list of tuples, where each tuple is a share in the form (x, y).
-    """
-    if k > n:
-        raise ValueError("k must be less than or equal to n")
-    coefficients = [secret] + [random.randint(1, 2**32-1) for _ in range(k-1)]
-    shares = []
-    for i in range(n):
-        x = i + 1
-        y = sum([coefficients[j] * x**j for j in range(k)])
-        shares.append((x, y))
-    return shares
+# --- Function to generate Random values for the polynomial ---
+def setup_coefficients(totalSharesNeededToReconstruct):
+	poly_coefficients = [random.randrange(0, PRIMEBOI) for _ in range(totalSharesNeededToReconstruct - 1)]
+	return poly_coefficients
+
+# --- Function to generate shares --- THIS IS ONLY FOR (2,n)
+def create_shares_individual(XofSharesDesired,The_secret,The_coefficents):
+    print(f"X Of share: {XofSharesDesired}")
+    y_Result_Val = (The_secret + XofSharesDesired*The_coefficents) % 31
+    # return y_Result_Val
+    NewPair = [XofSharesDesired,y_Result_Val]
+    return NewPair
 
 
+# --- FULL Function to CREATE SHARES
+def fully_create_shares(number_of_Shares_to_retrieve,secret_val,X_Vals_For_Shares):
+    pairs = []
 
-def reconstruct_secret(shares):
-    """
-    Reconstruct the secret from a list of shares using Lagrange interpolation.
-    Returns the reconstructed secret.
-    """
-    if len(shares) < 2:
-        raise ValueError("At least 2 shares are required to reconstruct the secret")
-    x_values, y_values = zip(*shares)
-    secret = 0
-    for i in range(len(shares)):
-        numerator, denominator = 1, 1
-        for j in range(len(shares)):
-            if i != j:
-                numerator *= -x_values[j]
-                denominator *= (x_values[i] - x_values[j])
-        secret += y_values[i] * numerator // denominator
-    return secret
+    # Create Polynomial
+    coefficients = setup_coefficients(number_of_Shares_to_retrieve)
+    print(f"Our Polynomial: f(x) = {secret_val} + a1*{coefficients[0]} mod {PRIMEBOI}")
+
+    # Create pairs:
+    for values in X_Vals_For_Shares:
+        both_x_and_y = create_shares_individual(values,secret_val,coefficients[0])
+        print(both_x_and_y)
+        pairs.append(both_x_and_y)
+
+    print(f"finally done: {pairs}")
+    return pairs
+
+
+# --- Function to get shares and put them back together ---
+def put_humpty_dumpty_back_together(useTheseSharesToRecreateArray,actualCipherShares):
+    total_length = len(useTheseSharesToRecreateArray)
+
+    recovered_vals = []
+    x1 = actualCipherShares[0][0]
+    y1 = actualCipherShares[0][1]
+
+    x2 = actualCipherShares[1][0]
+    y2 = actualCipherShares[1][1]
+
+    print(f"x1: {x1}, y1: {y1}, x2: {x2}, y2: {y2}")
+    lagrangeOutput = ((y1 * ((0 - x2)/(x1 - x2))) +  (y2 * ((0 - x1)/(x2 - x1)))) % PRIMEBOI
+    print(f"Output = {lagrangeOutput}")
+     
+
 
 
 # # --- Function downscale the image ---
@@ -184,11 +197,20 @@ def myLogo():
 
 inputImage = 'bitmap_guts.bmp'
 
-secret = 42
-n = 5
-k = 2
-shares = generate_shares(secret, n, k)
-print(shares)
+minNumberOfShares = 2
+SecretToHide = 1234
+WhatAreOurXVals = [1,3,4,8]
 
-reconstructed_secret = reconstruct_secret(shares[:k])
-print(reconstructed_secret)
+outputShares = fully_create_shares(minNumberOfShares,SecretToHide,WhatAreOurXVals)
+
+
+
+
+# ----
+# pick the shares to use to put this back together
+recreateUsingShareNumbers = outputShares[0],outputShares[1]
+
+#put_humpty_dumpty_back_together(recreateUsingShareNumbers,outputShares)
+
+output = reconstruct_secret(recreateUsingShareNumbers)
+print(output)
