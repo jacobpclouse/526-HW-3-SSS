@@ -1,0 +1,29 @@
+To convert a single share back into picture data, you would need to perform the reverse process of the encrypt_image function. First, you would extract the 'y' value from the tuple. Then, you would convert this value into binary data and then convert it back into a bytes object. Finally, you would write this bytes object to a new file with the ".bmp" file extension.
+
+Here's an example of how you could modify the encrypt_image function to take a single share as input and write it to a BMP file:
+
+
+def write_share_to_bmp(share, output_path):
+    """
+    Write a single share to a BMP file.
+    """
+    y = share[1]
+    binary_data = bin(y)[2:]
+    byte_data = bytearray(int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8))
+    with open(output_path, 'wb') as f:
+        f.write(byte_data)
+
+
+
+You can call this function by passing a single share from the 'shares' list and the path to the output BMP file:
+
+share_to_write = shares[0] # change index to choose a different share
+output_path = 'share1.bmp'
+write_share_to_bmp(share_to_write, output_path)
+
+
+
+This will write the first share in the 'shares' list to a BMP file named 'share1.bmp'.
+
+-- 
+NEED TO RIP OUT HEADER DATA

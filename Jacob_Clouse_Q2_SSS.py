@@ -104,7 +104,7 @@ def encrypt_image(image_path, n, k):
     Returns a list of n shares.
     """
     with open(image_path, "rb") as f:
-        # header_data = f.read(54)
+        # header_data = f.read(54) # read the bitmap header information
         image_data = f.read()
     print(image_data)
     binary_data = "".join(format(byte, "08b") for byte in image_data)
