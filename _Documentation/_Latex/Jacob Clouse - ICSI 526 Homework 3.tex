@@ -81,10 +81,27 @@ $\left(\frac{26}{2}\right) \textrm{ mod } 31$ $\rightarrow$
 $\left(13\right) \textrm{ mod } 31$ $\rightarrow$ \textbf{13}\\
 \newline
 
-\noindent We now had our two averaged shares: (37,13.5) and (38,13). We plugged them into our Lagrange Formula and got the following: \\
+\noindent We now had our two averaged shares: (37,13.5) and (38,13). We plugged them into our Lagrange Formula and got the following:\\ \vspace{0.1in}
 
+$f(x) = y_1*\left(\frac{x - x_2}{x_1 - x_2}\right) + y_2*\left(\frac{x - x_1}{x_2 - x_1}\right)$ 
+$\rightarrow$
+$f(x) = 13.5*\left(\frac{x - 38}{37 - 38}\right) + 13*\left(\frac{x - 37}{38 - 37}\right)$\\
 
+\noindent Solving for f(0):\\ \vspace{0.1in}
 
+$f(0) = 13.5*\left(\frac{0 - 38}{37 - 38}\right) + 13*\left(\frac{0 - 37}{38 - 37}\right)$
+$\rightarrow$
+$f(0) = 13.5*\left(\frac{-38}{-1}\right) + 13*\left(\frac{-37}{1}\right)$
+$\rightarrow$
+$f(0) = 13.5*38 + 13*(-37)$\\
+\vspace{0.1in}
+
+$f(0) = 513 + (-481)$
+$\rightarrow$
+$f(0) = 32$
+
+\vspace{0.1in}
+\noindent f(0) = \textbf{32} for the averaged formula, we just need to work backwards and see if we can get the 
 
 \vspace{0.2in}
 \section{Question 2}
