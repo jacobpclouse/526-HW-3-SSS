@@ -19,4 +19,4 @@ If you read an image as a byte stream, it reads the header file
 - Implementing Shamir’s Secret Sharing Scheme in Python Geeks for Geeks: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/#
 - A Beginners Guide to Bitmaps: http://paulbourke.net/dataformats/bitmaps/
 - EXAMPLE BITMAPS: https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
-
+- ValueError: invalid literal for int() with base 10: '': https://stackoverflow.com/questions/1841565/valueerror-invalid-literal-for-int-with-base-10

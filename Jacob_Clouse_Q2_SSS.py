@@ -128,9 +128,9 @@ def encrypt_image(image_path, n, k):
     shares = generate_shares(int(binary_data, 2), n, k)
     return shares,header_data
 
-
+'''
 # --- Function open the shares and return the image --- #
-def decrypt_image(shares):
+def decrypt_image_from_shares(shares):
     """
     Decrypt an image using Shamir Secret Sharing.
     Returns the decrypted image data as a bytes object.
@@ -141,6 +141,37 @@ def decrypt_image(shares):
     binary_data = "0" * padding + binary_data
     bytes_data = bytes(int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8))
     return bytes_data
+'''
+
+# --- Function open the shares and return the image --- #
+def decrypt_image(bitmap_share1,bitmap_share2):
+    # read in shares from file - skip header
+    with open(bitmap_share1, 'rb') as f:
+        f.seek(54) # skip the first 54 bytes
+        share1_data = f.read()
+        # share1 = tuple(map(int, share1_data.split()))
+        share1 = "".join(format(byte, "08b") for byte in share1_data)
+
+    with open(bitmap_share2, 'rb') as f:
+        f.seek(54) # skip the first 54 bytes
+        share2_data = f.read()
+        # share2 = tuple(map(int, share2_data.split()))
+        share2 = "".join(format(byte, "08b") for byte in share2_data)
+
+    # store shares as a list of tuples
+    shares = [share1, share2]
+
+    """
+    Decrypt an image using Shamir Secret Sharing.
+    Returns the decrypted image data as a bytes object.
+    """
+    secret = reconstruct_secret(shares)
+    binary_data = bin(secret)[2:]
+    padding = 8 - len(binary_data) % 8
+    binary_data = "0" * padding + binary_data
+    bytes_data = bytes(int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8))
+    return bytes_data
+
 
 # --- Function to print out my Logo ---
 def myLogo():
@@ -183,7 +214,7 @@ save_shares_as_bitmaps(shares_stuff,header_stuff)
 
 
 # Decrypt the image
-decrypted_data = decrypt_image(shares_stuff)
+decrypted_data = decrypt_image('share_1.bmp','share_2.bmp')
 
 # Save the decrypted image to a file
 with open("decrypted_image.bmp", "wb") as f:
