@@ -100,9 +100,9 @@ def save_shares_as_bitmaps(shares, header_data):
         byte_data = [int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8)] # split the binary string into bytes
         share_data = bytearray(byte_data) # convert the bytes to a bytearray
         
-        # # update the header information with the share data length
-        # share_size = len(share_data)
-        # header_data = header_data[:2] + share_size.to_bytes(4, byteorder="little") + header_data[10:]
+        # update the header information with the share data length
+        share_size = len(share_data)
+        header_data = header_data[:2] + share_size.to_bytes(4, byteorder="little") + header_data[10:]
 
         # create a new bitmap file for the share
         share_path = f"share_{i+1}.bmp"
