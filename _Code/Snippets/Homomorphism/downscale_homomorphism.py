@@ -172,7 +172,34 @@ def myLogo():
     print("Dedicated to Peter Zlomek and Harely Alderson III")
 
 
+# --- Function to downscale the image -- THIS IS NOT COMPLETE - NEED TO DO MORE - AVERAGE OF 4 PIXELS
+def downscale(image, filename=None):
+    image = Image.open(image)
 
+    # Calculate the downscale factor
+    width, height = image.size
+    width_new, height_new = width // 2, height // 2
+
+    # Create a new image with the smaller dimensions
+    downscaled = Image.new('RGB', (width_new, height_new), color=0)
+
+    # Perform the downscale operation
+    for i in range(width_new):
+        for j in range(height_new):
+            # Calculate the average of four pixels
+            pixel = (
+                sum(image.getpixel((2*i, 2*j))) +
+                sum(image.getpixel((2*i+1, 2*j))) +
+                sum(image.getpixel((2*i, 2*j+1))) +
+                sum(image.getpixel((2*i+1, 2*j+1)))
+            ) // 4
+            downscaled.putpixel((i, j), pixel)
+
+    # Save the downscaled image as a BMP file if filename is specified
+    if filename is not None:
+        downscaled.save(filename, format='BMP')
+
+    return downscaled
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # MAIN 
@@ -181,6 +208,9 @@ def myLogo():
 # myLogo()
 sys.set_int_max_str_digits(1000000)
 inputImage = '1.bmp'
+
+downscale(inputImage,"downscaled")
+
 new250Image = 'Only250.bmp'
 max_250(inputImage,new250Image)
 # header_data, image_data = split_image_shamir(inputImage)

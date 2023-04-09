@@ -20,3 +20,5 @@ If you read an image as a byte stream, it reads the header file
 - A Beginners Guide to Bitmaps: http://paulbourke.net/dataformats/bitmaps/
 - EXAMPLE BITMAPS: https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
 - ValueError: invalid literal for int() with base 10: '': https://stackoverflow.com/questions/1841565/valueerror-invalid-literal-for-int-with-base-10
+- How to Resize Images Using Python: https://towardsdatascience.com/how-to-resize-images-using-python-8aaba74602ed
+- Int Object is Not Iterable – Python Error [Solved]: https://www.freecodecamp.org/news/int-object-is-not-iterable-python-error-solved/

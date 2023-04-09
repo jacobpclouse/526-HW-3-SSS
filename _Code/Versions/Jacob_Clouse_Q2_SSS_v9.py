@@ -128,32 +128,44 @@ def encrypt_image(image_path, n, k):
     shares = generate_shares(int(binary_data, 2), n, k)
     return shares,header_data
 
-# --- Function open shares and get tuples back --- #
-def read_shares_from_bitmaps(num_shares):
-    shares = []
-    for i in range(1, num_shares+1):
-        share_path = f"share_{i}.bmp"
-        with open(share_path, "rb") as f:
-            # skip the header information
-            f.seek(54)
-            share_data = f.read()
-
-        # convert the share data to a binary string
-        binary_data = "".join(format(byte, "08b") for byte in share_data)
-        # convert the binary string to an integer
-        y = int(binary_data, 2)
-        x = i
-        shares.append((x, y))
-
-    return shares
-
+'''
 # --- Function open the shares and return the image --- #
-def decrypt_image(bitmap_shares):
+def decrypt_image_from_shares(shares):
     """
     Decrypt an image using Shamir Secret Sharing.
     Returns the decrypted image data as a bytes object.
     """
-    secret = reconstruct_secret(bitmap_shares)
+    secret = reconstruct_secret(shares)
+    binary_data = bin(secret)[2:]
+    padding = 8 - len(binary_data) % 8
+    binary_data = "0" * padding + binary_data
+    bytes_data = bytes(int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8))
+    return bytes_data
+'''
+
+# --- Function open the shares and return the image --- #
+def decrypt_image(bitmap_share1,bitmap_share2):
+    # read in shares from file - skip header
+    with open(bitmap_share1, 'rb') as f:
+        f.seek(54) # skip the first 54 bytes
+        share1_data = f.read()
+        # share1 = tuple(map(int, share1_data.split()))
+        share1 = "".join(format(byte, "08b") for byte in share1_data)
+
+    with open(bitmap_share2, 'rb') as f:
+        f.seek(54) # skip the first 54 bytes
+        share2_data = f.read()
+        # share2 = tuple(map(int, share2_data.split()))
+        share2 = "".join(format(byte, "08b") for byte in share2_data)
+
+    # store shares as a list of tuples
+    shares = [share1, share2]
+
+    """
+    Decrypt an image using Shamir Secret Sharing.
+    Returns the decrypted image data as a bytes object.
+    """
+    secret = reconstruct_secret(shares)
     binary_data = bin(secret)[2:]
     padding = 8 - len(binary_data) % 8
     binary_data = "0" * padding + binary_data
@@ -180,7 +192,7 @@ def myLogo():
 
 # myLogo()
 sys.set_int_max_str_digits(1000000)
-inputImage = '1.bmp'
+inputImage = 'grayscale.bmp'
 new250Image = 'Only250.bmp'
 max_250(inputImage,new250Image)
 # header_data, image_data = split_image_shamir(inputImage)
@@ -202,8 +214,7 @@ save_shares_as_bitmaps(shares_stuff,header_stuff)
 
 
 # Decrypt the image
-shares_from_bitmaps = read_shares_from_bitmaps(2)
-decrypted_data = decrypt_image(shares_from_bitmaps)
+decrypted_data = decrypt_image('share_1.bmp','share_2.bmp')
 
 # Save the decrypted image to a file
 with open("decrypted_image.bmp", "wb") as f:
