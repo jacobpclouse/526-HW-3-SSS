@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.1.30)  8 APR 2023 13:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.1.30)  10 APR 2023 12:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -256,15 +256,45 @@ Underfull \hbox (badness 10000) in paragraph at lines 110--113
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 118--121
+Underfull \hbox (badness 10000) in paragraph at lines 128--131
 
  []
 
-[2] (./Jacob Clouse - ICSI 526 Homework 3.aux) ) 
+
+Underfull \hbox (badness 10000) in paragraph at lines 128--131
+
+ []
+
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 135--138
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--138
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 141--144
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 165--168
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 179--182
+
+ []
+
+[3] (./Jacob Clouse - ICSI 526 Homework 3.aux) ) 
 Here is how much of TeX's memory you used:
  2080 strings out of 483183
  28391 string characters out of 5966292
- 262796 words of memory out of 5000000
+ 263796 words of memory out of 5000000
  17081 multiletter control sequences out of 15000+600000
  541448 words of font info for 60 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
@@ -281,11 +311,11 @@ r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-
 dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on "Jacob Clouse - ICSI 526 Homework 3.pdf" (2 pages, 131045 byt
+Output written on "Jacob Clouse - ICSI 526 Homework 3.pdf" (3 pages, 134286 byt
 es).
 PDF statistics:
- 59 PDF objects out of 1000 (max. 8388607)
- 42 compressed objects within 1 object stream
+ 62 PDF objects out of 1000 (max. 8388607)
+ 44 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

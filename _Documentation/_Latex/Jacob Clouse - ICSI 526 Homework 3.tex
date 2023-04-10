@@ -112,6 +112,67 @@ $\rightarrow$
 $13.5 = (1 * a_1(37)) \textrm{ mod } 31$ \\
 
 \noindent We need to find out what $a_1$ is here. If 
+% NEED HELP ASK PRADEEP
+
+
+
+
+
+
+\vspace{0.2in}
+\subsection{Finding Multiplication -- ASK PRADEEP -- NEED HELP ON LAST PART}
+\noindent To calculate the multiplication value, I had to multiply my two share y values and then find mod 31 of the product. My partner had to do the same with their shares and then we could feed the result into the Lagrange Formula to get our f(0) value.\\
+Again, as Partner 1, my two shares were: (37,9) and (37,18). 
+So I had to multiply 9 and 18, here is \textbf{my} math:\\ \vspace{0.1in}
+
+$\left(9*18\right) \textrm{ mod } 31$ $\rightarrow$
+$\left(162\right) \textrm{ mod } 31$ $\rightarrow$ \textbf{7}\\
+\newline
+
+\noindent Luna was Partner 2 and her two shares were: (38,24) and (38,2). 
+She had to multiply 24 and 2, here is \textbf{her} math:\\ \vspace{0.1in}
+
+$\left(24*2\right) \textrm{ mod } 31$ $\rightarrow$
+$\left(48\right) \textrm{ mod } 31$ $\rightarrow$ \textbf{17}\\
+\newline
+
+\noindent We now had our two multiplied shares: (37,7) and (38,17). We plugged them into our Lagrange Formula and got the following:\\ \vspace{0.1in}
+
+$f(x) = y_1*\left(\frac{x - x_2}{x_1 - x_2}\right) + y_2*\left(\frac{x - x_1}{x_2 - x_1}\right) \textrm{ mod } 31$ 
+$\rightarrow$
+$f(x) = 7*\left(\frac{x - 38}{37 - 38}\right) + 17*\left(\frac{x - 37}{38 - 37}\right) \textrm{ mod } 31$\\
+
+\noindent Solving for f(0):\\ \vspace{0.1in}
+
+$f(0) = 7*\left(\frac{0 - 38}{37 - 38}\right) + 17*\left(\frac{0 - 37}{38 - 37}\right) \textrm{ mod } 31$
+$\rightarrow$
+$f(0) = 7*\left(\frac{-38}{-1}\right) + 17*\left(\frac{-37}{1}\right)  \textrm{ mod } 31$
+\vspace{0.1in}
+
+$f(0) = 7*38 + 17*(-37)  \textrm{ mod } 31$
+$\rightarrow$
+$f(0) = 266 + (-629)  \textrm{ mod } 31$
+$\rightarrow$
+$f(0) = -363  \textrm{ mod } 31$
+$\rightarrow$
+$f(0) = 9$
+
+\vspace{0.1in}
+\noindent f(0) = \textbf{9} for the multiplication formula, we just need to work backwards and see if we can get the original values. 
+But we see that when we plug in our values into the original formula, we are left with a problem: \\ \vspace{0.1in}
+
+% ask pradeep!!!
+$f(x) = (a_0 * a_1x) \textrm{ mod } p$ 
+$\rightarrow$
+$7 = (9 * a_1(37)) \textrm{ mod } 31$ \\
+
+\noindent We need to find out what $a_1$ is here. If 
+
+
+
+
+
+
 
 \vspace{0.2in}
 \section{Question 2}

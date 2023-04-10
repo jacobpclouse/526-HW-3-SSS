@@ -1,4 +1,5 @@
 \contentsline {section}{\numberline {1}Question 1}{1}%
 \contentsline {subsection}{\numberline {1.1}Trying to find secret values - ASK PRADEEP}{1}%
 \contentsline {subsection}{\numberline {1.2}Finding Average -- ASK PRADEEP -- NEED HELP ON LAST PART}{2}%
-\contentsline {section}{\numberline {2}Question 2}{2}%
+\contentsline {subsection}{\numberline {1.3}Finding Multiplication -- ASK PRADEEP -- NEED HELP ON LAST PART}{2}%
+\contentsline {section}{\numberline {2}Question 2}{3}%
