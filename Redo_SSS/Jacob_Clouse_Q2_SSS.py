@@ -57,11 +57,19 @@ def split_image_shamir(imageToEncrypt, requiredNumberShares, totalGenShares):
     # return img_array.flatten(), img_array.shape
     flat_boi = img_array.flatten() # merge into single array
     image_dimensions = img_array.shape # ie should be like "640x480"
-
+    num_pix = (img_array.flatten()).shape[0]
     print(f"Your original image is {image_dimensions}")
     print(f"You will create {totalGenShares} total")
     print(f"You will need {requiredNumberShares} to retrieve")
-
+    print(f"Number of pixels: {num_pix}")
+    shares = []
+    with open('./generateCoeffs.text', 'w') as myarrayval:
+        myarrayval.write("START:\n")
+    for y in range(num_pix):
+        coeffs = [random.randint(1, 251) for i in range(requiredNumberShares-1)]
+        # Writing variable 
+        with open('./generateCoeffs.text', 'a') as myarrayval:
+            myarrayval.write(f"For y = {y} : {str(coeffs)}\n")
 
 
 
