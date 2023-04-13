@@ -1,0 +1,15 @@
+Need to:
+USE NUMPY
+
+1) just convert original one (no pic shares, just direct encrypt/decrypt)
+
+2) make shares (make sure no loss, and you can't see original pictures)
+
+3) scalar downsizing (ask pradeep, look at the homomorphism stuff)
+
+4) #3 question (header probs)
+
+
+
+** Ask chat gpt to convert numpy to binary
+(look at luna example)
