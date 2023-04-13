@@ -9,6 +9,7 @@
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Importing Libraries / Modules 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+import numpy as np
 import random
 from PIL import Image
 import sys
@@ -44,6 +45,37 @@ def max_250(origImage,newOutputName):
 
     # Save the new image as a bitmap file
     new_image.save(newOutputName)
+
+
+
+# Function to split an image into shares using Shamir's Secret Sharing algorithm
+def split_image_shamir(image_path, k, n):
+    # Load the image
+    with open(image_path, "rb") as f:
+        header = f.read(54) # BMP header is 54 bytes long
+        img_bytes = f.read()
+    img_data = np.frombuffer(img_bytes, dtype=np.uint8)
+
+    # THIS IS NOT WORKING CORRECTLY ---
+    # Split the image data into k shares using Shamir's Secret Sharing algorithm
+    x_values = list(range(1, n+1))
+    y_values = [img_data[i::3] for i in range(3)]
+    shares = []
+    for y in y_values:
+        coeffs = [random.randint(1, 255) for i in range(k-1)]
+        coeffs.insert(0, int.from_bytes(y, byteorder='big'))
+        share = [(x, sum(c * x**i for i, c in enumerate(coeffs)) % 256) for x in x_values]
+        shares.append(share)
+
+    # Save each share as a separate BMP image file
+    for i, share in enumerate(shares):
+        img_share_data = np.zeros_like(img_data)
+        for j, (x, y) in enumerate(share):
+            img_share_data[j::n*3] = y
+        img_share_bytes = header + bytes(img_share_data)
+        with open(f"image_share_{i}.bmp", "wb") as f:
+            f.write(img_share_bytes)
+
 
 
 
@@ -91,41 +123,41 @@ def max_250(origImage,newOutputName):
 #     return secret
 
 
-# --- Function to save shares as bitmaps ---
-def save_shares_as_bitmaps(shares, header_data):
-    for i, share in enumerate(shares):
-        x, y = share
-        binary_data = format(y, "08b") # convert the y value to a binary string
-        byte_data = [int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8)] # split the binary string into bytes
-        share_data = bytearray(byte_data) # convert the bytes to a bytearray
+# # --- Function to save shares as bitmaps ---
+# def save_shares_as_bitmaps(shares, header_data):
+#     for i, share in enumerate(shares):
+#         x, y = share
+#         binary_data = format(y, "08b") # convert the y value to a binary string
+#         byte_data = [int(binary_data[i:i+8], 2) for i in range(0, len(binary_data), 8)] # split the binary string into bytes
+#         share_data = bytearray(byte_data) # convert the bytes to a bytearray
         
-        # # update the header information with the share data length
-        # share_size = len(share_data)
-        # header_data = header_data[:2] + share_size.to_bytes(4, byteorder="little") + header_data[10:]
+#         # # update the header information with the share data length
+#         # share_size = len(share_data)
+#         # header_data = header_data[:2] + share_size.to_bytes(4, byteorder="little") + header_data[10:]
 
-        # create a new bitmap file for the share
-        share_path = f"share_{i+1}.bmp"
-        with open(share_path, "wb") as f:
-            f.write(header_data)
-            f.write(share_data)
+#         # create a new bitmap file for the share
+#         share_path = f"share_{i+1}.bmp"
+#         with open(share_path, "wb") as f:
+#             f.write(header_data)
+#             f.write(share_data)
 
 
 
-# --- Function open the image and get shares --- #
-def encrypt_image(image_path, n, k):
-    """
-    Encrypt an image using Shamir Secret Sharing.
-    Returns a list of n shares.
-    """
-    with open(image_path, "rb") as f:
-        header_data = f.read(54) # read the bitmap header information
-        image_data = f.read()
-    # print(image_data)
-    binary_data = "".join(format(byte, "08b") for byte in image_data)
-    # go through each and every byte other than data and if its greater than 
-    # print(binary_data)
-    shares = generate_shares(int(binary_data, 2), n, k)
-    return shares,header_data
+# # --- Function open the image and get shares --- #
+# def encrypt_image(image_path, n, k):
+#     """
+#     Encrypt an image using Shamir Secret Sharing.
+#     Returns a list of n shares.
+#     """
+#     with open(image_path, "rb") as f:
+#         header_data = f.read(54) # read the bitmap header information
+#         image_data = f.read()
+#     # print(image_data)
+#     binary_data = "".join(format(byte, "08b") for byte in image_data)
+#     # go through each and every byte other than data and if its greater than 
+#     # print(binary_data)
+#     shares = generate_shares(int(binary_data, 2), n, k)
+#     return shares,header_data
 
 
 
