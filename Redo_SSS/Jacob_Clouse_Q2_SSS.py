@@ -1,10 +1,16 @@
 # This Python Program was written on Linux Mint and Windows 10 using VScode, your milage may vary on OS and configuration.
 
-# **NOTES:**
-# --- if we have probs with downscaling and images not having the correct number of pixels, we could potentally just scale them up to a power of 100 and then downscale them, it will work, need to talk with pradeep about this
-# OR we can just have a check to make sure that there are a x4 values in each comparision beforehand, and IF NOT it will just fill take the original value and use that
-# **** OOORRR we can get the pixel count first, mod 4 it and (if remainder exists), add extra pixel values, then group and average them
-
+'''
+This program is a visual implimentation of:
+  __                              __                                 __                            
+ /    /              /           /                        /         /    /              /          
+(___ (___  ___  _ _    ___      (___  ___  ___  ___  ___ (___      (___ (___  ___  ___    ___  ___ 
+    )|   )|   )| | )| |   )         )|___)|    |   )|___)|             )|   )|   )|   )| |   )|   )
+ __/ |  / |__/||  / | |          __/ |__  |__  |    |__  |__        __/ |  / |__/||    | |  / |__/ 
+                                                                                              __/  
+Total shares = 5
+Required shares to retrieve the original image = 2
+'''
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Importing Libraries / Modules 
@@ -12,12 +18,7 @@
 import numpy as np
 import random
 from PIL import Image
-import sys
-
-# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# Variables
-# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
+# import sys
 
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -49,13 +50,22 @@ def max_250(origImage,newOutputName):
 
 
 # Function to split an image into shares using Shamir's Secret Sharing algorithm
-def split_image_shamir(image_path, k, n):
+def split_image_shamir(imageToEncrypt, requiredNumberShares, totalGenShares):
     # Load the image
-    with open(image_path, "rb") as f:
-        header = f.read(54) # BMP header is 54 bytes long
-        img_bytes = f.read()
-    img_data = np.frombuffer(img_bytes, dtype=np.uint8)
+    with Image.open(imageToEncrypt).convert('L') as youBoiImage:
+        img_array = np.array(youBoiImage)
+    # return img_array.flatten(), img_array.shape
+    flat_boi = img_array.flatten() # merge into single array
+    image_dimensions = img_array.shape # ie should be like "640x480"
 
+    print(f"Your original image is {image_dimensions}")
+    print(f"You will create {totalGenShares} total")
+    print(f"You will need {requiredNumberShares} to retrieve")
+
+
+
+
+'''
     # THIS IS NOT WORKING CORRECTLY ---
     # Split the image data into k shares using Shamir's Secret Sharing algorithm
     x_values = list(range(1, n+1))
@@ -75,7 +85,7 @@ def split_image_shamir(image_path, k, n):
         img_share_bytes = header + bytes(img_share_data)
         with open(f"image_share_{i}.bmp", "wb") as f:
             f.write(img_share_bytes)
-
+'''
 
 
 
@@ -208,7 +218,14 @@ def myLogo():
     print(" \___/ \__,_|\___\___/|_.__/  \____/|_|\___/ \__,_|___/\___| ")
     print("Dedicated to Peter Zlomek and Harely Alderson III")
 
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Variables
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+totalNumberOfShares = 5
+requiredSharesToRetrieve = 2
 
+inputImage = '1.bmp'
+new250Image = 'Only250.bmp'
 
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -217,12 +234,9 @@ def myLogo():
 
 # myLogo()
 
-inputImage = '1.bmp'
-new250Image = 'Only250.bmp'
 max_250(inputImage,new250Image)
+split_image_shamir(new250Image, requiredSharesToRetrieve, totalNumberOfShares)
 
-n = 5
-k = 2
 
 
 
