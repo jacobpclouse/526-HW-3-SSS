@@ -111,7 +111,7 @@ gen_imgs,shape = split_image_shamir(path,n=n, r=r,max_value=250) # change r and 
 to_save = [Image.new("L", shape) for _ in range(n)]
 for i, img in enumerate(gen_imgs):
     to_save[i].putdata(img)
-    to_save[i].save("test2_{}.bmp".format(i + 1))
+    to_save[i].save("share{}.bmp".format(i + 1))
 
 
 
@@ -121,6 +121,6 @@ origin_img = decode(gen_imgs[0:r], list(range(1, r + 1)), r=r, n=n)
 
 img = Image.new("L", shape, color=0)
 img.putdata(list(origin_img))
-img.save("test2_origin.bmp")
+img.save("reconstructed.bmp")
 
 
