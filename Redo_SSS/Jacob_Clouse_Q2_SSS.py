@@ -49,27 +49,41 @@ def max_250(origImage,newOutputName):
 
 
 
-# Function to split an image into shares using Shamir's Secret Sharing algorithm
+# --- Function to split an image into shares using Shamir's Secret Sharing algorithm --- 
 def split_image_shamir(imageToEncrypt, requiredNumberShares, totalGenShares):
-    # Load the image
+    # Load the image, convert to grayscale just to be sure...
     with Image.open(imageToEncrypt).convert('L') as youBoiImage:
-        img_array = np.array(youBoiImage)
+        dataArray = np.array(youBoiImage)
     # return img_array.flatten(), img_array.shape
-    flat_boi = img_array.flatten() # merge into single array
-    image_dimensions = img_array.shape # ie should be like "640x480"
-    num_pix = (img_array.flatten()).shape[0]
+    flat_boi = dataArray.flatten() # merge into single array
+    image_dimensions = dataArray.shape # ie should be like "640x480"
+    num_pix = (dataArray.flatten()).shape[0]
+
     print(f"Your original image is {image_dimensions}")
     print(f"You will create {totalGenShares} total")
     print(f"You will need {requiredNumberShares} to retrieve")
     print(f"Number of pixels: {num_pix}")
-    shares = []
-    with open('./generateCoeffs.text', 'w') as myarrayval:
-        myarrayval.write("START:\n")
-    for y in range(num_pix):
-        coeffs = [random.randint(1, 251) for i in range(requiredNumberShares-1)]
-        # Writing variable 
-        with open('./generateCoeffs.text', 'a') as myarrayval:
-            myarrayval.write(f"For y = {y} : {str(coeffs)}\n")
+
+
+    num_pixels = num_pix # Get the total number of pixels in the image
+    coef = np.random.randint(low = 0, high = 251, size = (num_pixels, requiredNumberShares - 1)) # Generate an array of random coefficients for the polynomial function
+    gen_imgs = []
+    for i in range(1, totalGenShares + 1):
+        base = np.array([i ** j for j in range(1, requiredNumberShares)]) # Generate the base for the polynomial function
+        base = np.matmul(coef, base) # Multiply the coefficients with the base to generate the shares
+        img_ = flat_boi + base # Add the shares to the original image
+        img_ = img_ % 251 # Take the modulo to ensure values are within the range [0, 250]
+        gen_imgs.append(img_)
+
+
+    '''THIS CODE NEEDS TO CHANGE!!!'''
+
+    coeffConverted = np.array(gen_imgs) # redo and merge with below
+    encryptedShares = coeffConverted.reshape(requiredNumberShares, *image_dimensions)
+    for i, outputImage in enumerate(encryptedShares):
+        Image.fromarray(outputImage.astype(np.uint8)).save("share_{}.bmp".format(i + 1))
+
+
 
 
 
