@@ -42,28 +42,47 @@
 \tableofcontents
 \vspace{0.2in}
 \section{Question 1}
-\subsection{Trying to find secret values - ASK PRADEEP - view video}
+\subsection{Trying to find secret values}
 % YOU NEED TO WORKOUT ALL ATTEPMTS TO REVERSE ENGINEER THIS AS AN ATTACKER
-\noindent I am Partner 1 in this instance and my shares are: (37,9) and  (37,18), with our prime being 31. These are \vspace{0.2in}two different shares from two different equations, and we know that the original cipher is a (2, n) SSS scheme. This means we need 2 shares (k) at least in order to retrieve it, but we have only 1 for each (k - 1). We know that from our text that we can not find the original value from this, but lets look deeper. To retrieve our original secret ($a_0$), we use the formula: (f(x) = ($a_0$ * $a_1$x) mod p). We would get to this formula by using the Lagrange Interpolation formula (L(x) = $y_1$ * (x - $x_2$) / ($x_1$ - $x_2$) + $y_2$ * (x - $x_1$) / ($x_2$ - $x_1$) mod q) in conjunction with our 2 shares.\\
+\noindent I am Partner 1 in this instance and my shares are: (37,9) and  (37,18), with our prime being 31. These are two different shares from two different equations, and we know that the original cipher is a (2, n) SSS scheme. This means we need 2 shares (k) at least in order to retrieve it, but we have only 1 for each (k - 1). We know that from our text that we can not find the original value from this, but lets look deeper. To retrieve our original secret ($a_0$), we use the formula:\\ 
+
+$f(37) = (a_0 + a_1*37) \textrm{ mod } 31$
+\vspace{0.1in}
 \newline
-Lets use (37,9) to try and fill in as much as we can with the formula:\\ L(x) = 9 * (x - $x_2$) / (37 - $x_2$) + $y_2$ * (x - 37) / ($x_2$ - 37) mod q\\
-This leaves too many potential solutions that are all equally likely but lead to drastically different formulas and results. \\
+Lets use (37,9) to try and fill in as much as we can with the formula. Lets say we have $a_0$ = 3 and $a_1$ = 1, then we have:
+\\ 
+
+$f(37) = (3 + 1*37) \textrm{ mod } 31$
+$\rightarrow$ 9
+\vspace{0.1in}
 \newline
+Or lets say we have $a_0$ = 34 and $a_1$ = 1, then we have:
+\\ 
+
+$f(37) = (34 + 1*37) \textrm{ mod } 31$
+$\rightarrow$ 9
+\vspace{0.1in}
+\newline
+Or lets say we have $a_0$ = 59 and $a_1$ = 2, then we have:
+\\ 
+
+$f(37) = (59 + 2*37) \textrm{ mod } 31$
+$\rightarrow$ 9
+\vspace{0.1in}
+\newline
+How do we know which one is correct? They all give us the same answer and  each one is equally likely. This is why we can't know for sure and is why it is impossible to find the secret without having k shares.
+% YOU NEED TO WORKOUT ALL ATTEPMTS TO REVERSE ENGINEER THIS AS AN ATTACKER
+
+\if false
 For example, if we choose x2 = 10 and y2 = 25, we see our formula develop like this: \\
 f(x) = 9 * (x - 10) / 27 + 25 * (x - 37) / (-27) = 25 - (x - 10) / 3 - (x - 37) or (-2x + 96) mod q\\
 \newline
 Or we can choose x2 = 20 and y2 = 15 and have our formula look like: \\
 f(x) = 9 * (x - 20) / 17 + 15 * (x - 37) / (-17) = 15 - 3(x - 20) / 17 - 5(x - 37) / 17 or (-8x + 351) mod q\\
-\newline
-How do we know which one is correct? Each one is equally valid, and we can not know for sure, this is why it is impossible to find the secret without having k shares. This is why Shamir's Secret Sharing is secure to use. 
-% YOU NEED TO WORKOUT ALL ATTEPMTS TO REVERSE ENGINEER THIS AS AN ATTACKER
-
-\if false
-The first thing you realize here is that you can not get the original equation back using Lagrange Interpolation (L(x) = $y_1$ * (x - $x_2$) / ($x_1$ - $x_2$) + $y_2$ * (x - $x_1$) / ($x_2$ - $x_1$)) because it will end up looking like L(x) = 9 * (x - 37) / (\textbf{37 - 37}) + 18 * (x - 37) / (\textbf{37 - 37}). This will give us a divide by 0 error so we can not progress further. 
 \fi
 
 \vspace{0.2in}
-\subsection{Finding Average -- ASK PRADEEP -- NEED HELP ON LAST PART}
+\subsection{Finding Average}
 \noindent For the average, I had to take my two shares and average the y coordinates together, my partner had to do the same with their shares and then we could feed the result into the Lagrange Formula to get our f(0) value.\\
 Again, as Partner 1, my two shares were: (37,9) and (37,18). 
 So I initially thought I had to just average 9 and 18, but that will lead to a decimal. So i had to use the forumla: (9+18)*$2^{-1} \textrm{ mod } 31$.  Here is \textbf{my} math:\\ \vspace{0.1in}
