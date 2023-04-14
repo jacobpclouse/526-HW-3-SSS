@@ -160,14 +160,10 @@ def decode_downsize(imgs, index, r, n):
     # you can also just re open up the share by passing in the name and get the dimensions that way
     assert len(imgs) >= r
     x = index
-    # print(x)
-    print(len(imgs[0]))
-    # dim = len(imgs[0]) // 4
     dim = len(imgs[0]) // 4
     img = []
     for i in range(dim):
         y = [imgs[j][i] for j in range(r)]
-        # print(y)
         pixel = lagrange(x, y, r, 0) % 251
         img.append(pixel)
         
