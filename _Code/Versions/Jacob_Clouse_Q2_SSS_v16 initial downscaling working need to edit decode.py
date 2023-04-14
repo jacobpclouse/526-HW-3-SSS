@@ -17,7 +17,7 @@ Required shares to retrieve the original image = 2
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import random
 from PIL import Image
-import math
+
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Functions
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -63,25 +63,40 @@ def split_image_shamir(path,downscaleBool,n,r,max_value=None):
         name_of_share = "share{}.bmp".format(i + 1)
         to_save[i].save(name_of_share)
         share_names.append(name_of_share)
+    # for labels in share_names:
+    #     print(labels)
 
-    # checks to see if downscaling is active
+
     if downscaleBool == True:
         '''DOWN SCALING'''
-        print("Downscaling Activated!")
-        for labels in share_names:
-            new_width, new_height, new_array_boi = downscale_image(labels, width, height)
+        # array_bits = gen_imgs[0:r]
+        # decode_list = list(range(1, r + 1))
 
+        # for i, imgOut in enumerate(gen_imgs):
+        for labels in share_names:
+            new_width, new_height = downscale_image(labels, width, height)
+            
         width = new_width
         height = new_height
-        array_bits = new_array_boi
 
-        # overrun if not adjusted
-        # array_bits = math.floor(array_bits/4)
-        # THIS IS TRICKY
-        # decode_list = list(range(1, ((math.floor(r/4)) + 1)))
-    else:
-        print("No Downscaling Requested!")
 
+
+
+
+        # scaled_gen_imgs = []
+        # for i in range(n):
+        #     scaled_img, half_width, half_height= downscale_image(gen_imgs[i], width, height)
+        #     scaled_gen_imgs.append(scaled_img)
+
+        # # Reconstruction data - downscaled
+        # array_bits = scaled_gen_imgs[0:r]
+        # decode_list = list(range(1, r + 1))
+
+        # # Create Share value images - downscale
+        # to_save = [Image.new("L", (half_width, half_height)) for _ in range(n)]
+        # for i, imgOut in enumerate(scaled_gen_imgs):
+        #     to_save[i].putdata(imgOut)
+        #     to_save[i].save("share{}.bmp".format(i + 1))
 
         print("Encrypted Shares Generated!")
 
@@ -95,7 +110,7 @@ def downscale_image(orig_image, width, height):
     half_width = width // 2
     half_height = height // 2
     new_img = Image.new('RGB', (half_width, half_height))
-    new_array_bits = []
+
     # Iterate over the new image pixels
     for x in range(half_width):
         for y in range(half_height):
@@ -113,12 +128,10 @@ def downscale_image(orig_image, width, height):
             # Set the new pixel in the new image
             new_img.putpixel((x, y), (r, g, b))
 
-    # redo the size
-            new_array_bits.append(pixels[0:r])
-
     # Save the new image share over original
+    # new_img.save('output_image.bmp')
     new_img.save(orig_image)
-    return half_width, half_height, new_array_bits
+    return half_width, half_height
     # return down_image, down_width, down_height
 
 
@@ -191,15 +204,9 @@ gen_imgs,shape,arr_bit,list_bit = split_image_shamir(path,wantDownscale,n=n,r=r,
 
 
 
-''' DECRYPTION'''  
-# NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED  
-'''NO DOWNSCALE'''
-if wantDownscale == False:
-    origin_img = decode(arr_bit, list_bit, r=r, n=n)
-else:
-    # only 1/4 of length
-    
-    origin_img = decode(arr_bit, list_bit, r=r, n=n)
+''' DECRYPTION'''    
+origin_img = decode(arr_bit, list_bit, r=r, n=n)
+
 
 # save output
 img = Image.new("L", shape, color=0)
