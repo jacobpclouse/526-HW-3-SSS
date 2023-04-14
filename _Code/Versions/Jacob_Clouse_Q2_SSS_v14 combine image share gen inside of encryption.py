@@ -115,7 +115,7 @@ def myLogo():
 
 # myLogo()
 
-# LET THE USER SET THESE with input
+# LET THE USER SET THESE
 path = "1.bmp"
 n = 5
 r = 3
@@ -127,12 +127,15 @@ gen_imgs,shape = split_image_shamir(path,n=n, r=r,max_value=250) # change r and 
 # idea have a varible to ask if they want to downsize/use homomorphism ************
 #   We can then have it break off inside the function if so to either function **********
 
+# to_save = [Image.new("L", shape) for _ in range(n)]
+# for i, img in enumerate(gen_imgs):
+#     to_save[i].putdata(img)
+#     to_save[i].save("share{}.bmp".format(i + 1))
 
 
 
 ''' DECRYPTION'''    
-origin_img = decode(gen_imgs[0:r], list(range(1, r + 1)), r=r, n=n) # can we do some of this calc in its own function or inside encryption and then just return it?
-
+origin_img = decode(gen_imgs[0:r], list(range(1, r + 1)), r=r, n=n)
 
 
 # save output
