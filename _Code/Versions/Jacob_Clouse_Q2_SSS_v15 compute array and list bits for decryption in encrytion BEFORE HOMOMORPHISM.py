@@ -26,7 +26,7 @@ from PIL import Image
 # --- Function to read in an image, adjust to only 250 max values, and generate shares --- 
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
 def split_image_shamir(path, n, r, max_value=None):
-    # make sure that we don't have pixel values greater than 250, SOURCE: https://thepythonguru.com/python-builtin-functions/max/
+    # make sure that we don't have pixel values greater than 250
     img = Image.open(path).convert('L')
     img_array = []
     width, height = img.size
@@ -135,6 +135,7 @@ gen_imgs,shape,arr_bit,list_bit = split_image_shamir(path,n=n, r=r,max_value=250
 
 
 ''' DECRYPTION'''    
+# origin_img = decode(gen_imgs[0:r], list(range(1, r + 1)), r=r, n=n) # can we do some of this calc in its own function or inside encryption and then just return it?
 origin_img = decode(arr_bit, list_bit, r=r, n=n)
 
 
