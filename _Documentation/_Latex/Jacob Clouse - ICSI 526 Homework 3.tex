@@ -220,15 +220,18 @@ $\rightarrow$
 $f(0) = 9$
 
 \vspace{0.1in}
-\noindent f(0) = \textbf{9} for the multiplication formula, we just need to work backwards and see if we can get the original values. 
-But we see that when we plug in our values into the original formula, we are left with a problem: \\ \vspace{0.1in}
+\noindent f(0) = \textbf{9} for the multiplication formula, we just need to work backwards and see if we can get the original values. We from 1.2 that secret 1 = 12 and secret 2 = 21. But we see that when we plug in these values into the original formula, we are left with a problem: \\ \vspace{0.1in}
 
-% ask pradeep!!!
-$f(x) = (a_0 * a_1x) \textrm{ mod } p$ 
+
+$(12 * 21) \textrm{ mod } 31$ 
 $\rightarrow$
-$7 = (9 * a_1(37)) \textrm{ mod } 31$ \\
+$252 \textrm{ mod } 31$
+$\rightarrow$
+$4$
+\newline
 
-\noindent We need to find out what $a_1$ is here. If 
+\vspace{0.1in}
+\noindent These are not the same and this is because we didn't maintain the proportions with scalar multiplication (like we did in 1.2). This means that the aspects haven't been preserved by homomorphism. 
 
 
 
