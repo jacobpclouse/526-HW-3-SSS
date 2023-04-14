@@ -42,7 +42,7 @@
 \tableofcontents
 \vspace{0.2in}
 \section{Question 1}
-\subsection{Trying to find secret values - ASK PRADEEP - view video}
+\subsection{Trying to find secret values - ASK PRADEEP}
 % YOU NEED TO WORKOUT ALL ATTEPMTS TO REVERSE ENGINEER THIS AS AN ATTACKER
 \noindent I am Partner 1 in this instance and my shares are: (37,9) and  (37,18), with our prime being 31. These are \vspace{0.2in}two different shares from two different equations, and we know that the original cipher is a (2, n) SSS scheme. This means we need 2 shares (k) at least in order to retrieve it, but we have only 1 for each (k - 1). We know that from our text that we can not find the original value from this, but lets look deeper. To retrieve our original secret ($a_0$), we use the formula: (f(x) = ($a_0$ * $a_1$x) mod p). We would get to this formula by using the Lagrange Interpolation formula (L(x) = $y_1$ * (x - $x_2$) / ($x_1$ - $x_2$) + $y_2$ * (x - $x_1$) / ($x_2$ - $x_1$) mod q) in conjunction with our 2 shares.\\
 \newline
@@ -66,11 +66,11 @@ The first thing you realize here is that you can not get the original equation b
 \subsection{Finding Average -- ASK PRADEEP -- NEED HELP ON LAST PART}
 \noindent For the average, I had to take my two shares and average the y coordinates together, my partner had to do the same with their shares and then we could feed the result into the Lagrange Formula to get our f(0) value.\\
 Again, as Partner 1, my two shares were: (37,9) and (37,18). 
-So I initially thought I had to just average 9 and 18, but that will lead to a decimal. So i had to use the forumla: (9+18)*$2^{-1} \textrm{ mod } 31$.  Here is \textbf{my} math:\\ \vspace{0.1in}
+So I had to average 9 and 18, here is \textbf{my} math:\\ \vspace{0.1in}
 
-$\left(9+18\right)*2^{-1} \textrm{ mod } 31$ $\rightarrow$
-$\left(27\right)*16 \textrm{ mod } 31$ $\rightarrow$
-$432 \textrm{ mod } 31$ $\rightarrow$ \textbf{29}\\
+$\left(\frac{9+18}{2}\right) \textrm{ mod } 31$ $\rightarrow$
+$\left(\frac{27}{2}\right) \textrm{ mod } 31$ $\rightarrow$ 
+$\left(13.5\right) \textrm{ mod } 31$ $\rightarrow$ \textbf{13.5}\\
 \newline
 
 \noindent Luna was Partner 2 and her two shares were: (38,24) and (38,2). 
@@ -81,80 +81,37 @@ $\left(\frac{26}{2}\right) \textrm{ mod } 31$ $\rightarrow$
 $\left(13\right) \textrm{ mod } 31$ $\rightarrow$ \textbf{13}\\
 \newline
 
-\noindent We now had our two averaged shares: (37,29) and (38,13). We plugged them into our Lagrange Formula and got the following:\\ \vspace{0.1in}
+\noindent We now had our two averaged shares: (37,13.5) and (38,13). We plugged them into our Lagrange Formula and got the following:\\ \vspace{0.1in}
 
 $f(x) = y_1*\left(\frac{x - x_2}{x_1 - x_2}\right) + y_2*\left(\frac{x - x_1}{x_2 - x_1}\right) \textrm{ mod } 31$ 
 $\rightarrow$
-$f(x) = 29*\left(\frac{x - 38}{37 - 38}\right) + 13*\left(\frac{x - 37}{38 - 37}\right) \textrm{ mod } 31$\\
+$f(x) = 13.5*\left(\frac{x - 38}{37 - 38}\right) + 13*\left(\frac{x - 37}{38 - 37}\right) \textrm{ mod } 31$\\
 
-%\noindent Solving for f(0):\\ \vspace{0.1in}
+\noindent Solving for f(0):\\ \vspace{0.1in}
 
-$f(0) = 29*\left(\frac{0 - 38}{37 - 38}\right) + 13*\left(\frac{0 - 37}{38 - 37}\right) \textrm{ mod } 31$
+$f(0) = 13.5*\left(\frac{0 - 38}{37 - 38}\right) + 13*\left(\frac{0 - 37}{38 - 37}\right) \textrm{ mod } 31$
 $\rightarrow$
-$f(0) = 29*\left(\frac{-38}{-1}\right) + 13*\left(\frac{-37}{1}\right)  \textrm{ mod } 31$
+$f(0) = 13.5*\left(\frac{-38}{-1}\right) + 13*\left(\frac{-37}{1}\right)  \textrm{ mod } 31$
 \vspace{0.1in}
 
-$f(0) = 29*38 + 13*(-37)  \textrm{ mod } 31$
+$f(0) = 13.5*38 + 13*(-37)  \textrm{ mod } 31$
 $\rightarrow$
-$f(0) = 1102 + (-481)  \textrm{ mod } 31$
+$f(0) = 513 + (-481)  \textrm{ mod } 31$
 $\rightarrow$
-$f(0) = 621  \textrm{ mod } 31$
+$f(0) = 32  \textrm{ mod } 31$
 $\rightarrow$
 $f(0) = 1$
 
 \vspace{0.1in}
-\noindent \textbf{f(0) = 1 for the averaged formula}, we just need to work backwards and see if we can get the original values. We find secret 1 with shares (37,9) and (38,24):\\ \vspace{0.1in}
+\noindent f(0) = \textbf{1} for the averaged formula, we just need to work backwards and see if we can get the original values. 
+But we see that when we plug in our values into the original formula, we are left with a problem: \\ \vspace{0.1in}
 
-$f(x) = 9*\left(\frac{x - 38}{37 - 38}\right) + 24*\left(\frac{x - 37}{38 - 37}\right) \textrm{ mod } 31$\\
-
-%\noindent Solving for f(0):\\ \vspace{0.1in}
-
-$f(0) = 9*\left(\frac{0 - 38}{37 - 38}\right) + 24*\left(\frac{0 - 37}{38 - 37}\right) \textrm{ mod } 31$
+% ask pradeep!!!
+$f(x) = (a_0 * a_1x) \textrm{ mod } p$ 
 $\rightarrow$
-$f(0) = 9*\left(\frac{-38}{-1}\right) + 24*\left(\frac{-37}{1}\right)  \textrm{ mod } 31$
-\vspace{0.1in}
+$13.5 = (1 * a_1(37)) \textrm{ mod } 31$ \\
 
-$f(0) = 9*38 + 24*(-37)  \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = 342 + (-888)  \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = -546  \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = 12$
-\vspace{0.15in}
-
-\noindent f(0) for secret 1 is 12.  We find secret 2 with shares (37,18) and (38,2):\\ \vspace{0.1in}
-
-$f(x) = 18*\left(\frac{x - 38}{37 - 38}\right) + 2*\left(\frac{x - 37}{38 - 37}\right) \textrm{ mod } 31$\\
-
-%\noindent Solving for f(0):\\ \vspace{0.1in}
-
-$f(0) = 18*\left(\frac{0 - 38}{37 - 38}\right) + 2*\left(\frac{0 - 37}{38 - 37}\right) \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = 18*\left(\frac{-38}{-1}\right) + 2*\left(\frac{-37}{1}\right)  \textrm{ mod } 31$
-\vspace{0.1in}
-
-$f(0) = 18*38 + 2*(-37)  \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = 684 + (-74)  \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = 610  \textrm{ mod } 31$
-$\rightarrow$
-$f(0) = 21$
-\vspace{0.15in}
-
-\noindent f(0) for secret 2 is 21.  Now we take these numbers and can feed them back into our average formula: (12+21)*$2^{-1} \textrm{ mod } 31$.  Here is \textbf{my} math:\\ \vspace{0.1in}
-
-$\left(12+21\right)*2^{-1} \textrm{ mod } 31$ $\rightarrow$
-$\left(33\right)*16 \textrm{ mod } 31$ $\rightarrow$
-$526 \textrm{ mod } 31$ $\rightarrow$ \textbf{1}\\
-\vspace{0.15in}
-
-\noindent 1 = 1, but why? It is because we kept proportions using scalar multiplication (the inverse modulus 2 and the normal averaging of luna's shares). This ensured that we kept everything in line and got the same average in the end. 
-
-
-
-
+\noindent We need to find out what $a_1$ is here. If 
 % NEED HELP ASK PRADEEP
 
 
