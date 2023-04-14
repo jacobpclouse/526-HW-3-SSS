@@ -48,12 +48,21 @@ def split_image_shamir(path, n, r, max_value=None):
             base_sum = sum([coef[p][j] * base[j] for j in range(r-1)])
             img_.append((img_array [p] + base_sum) % 251)
         gen_imgs.append(img_)
-    return gen_imgs,(width, height)
+    # return gen_imgs,(width, height)
     # can we put the image generation inside this function?
 
+    to_save = [Image.new("L", (width, height)) for _ in range(n)]
+    for i, imgOut in enumerate(gen_imgs):
+        to_save[i].putdata(imgOut)
+        to_save[i].save("share{}.bmp".format(i + 1))
+
+    print("Encrypted Shares Generated!")
+    return gen_imgs,(width, height)
 
 
 
+# --- Function to reconstruct the secret using Lagrange function ---
+# SOURCE: https://github.com/cfgnunes/numerical-methods-python/blob/main/interpolation.py
 def lagrange(x, y, num_points, x_test):
     l = [0] * num_points
     for k in range(num_points):
@@ -66,9 +75,15 @@ def lagrange(x, y, num_points, x_test):
     L = 0
     for i in range(num_points):
         L += y[i] * l[i]
+
+    # print("Lagrange Function Executed!")
     return L
 
 
+
+
+# --- Function to reconstruct the original image using the shares ---
+# SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/
 def decode(imgs, index, r, n):
     assert len(imgs) >= r
     x = index
@@ -78,6 +93,8 @@ def decode(imgs, index, r, n):
         y = [imgs[j][i] for j in range(r)]
         pixel = lagrange(x, y, r, 0) % 251
         img.append(pixel)
+        
+    print("Decrypted Image Restored!")
     return img
 
 
@@ -98,20 +115,22 @@ def myLogo():
 
 # myLogo()
 
+# LET THE USER SET THESE
 path = "1.bmp"
 n = 5
 r = 3
 
 
 '''ENCRYPTION'''
-gen_imgs,shape = split_image_shamir(path,n=n, r=r,max_value=250) # change r and n
+gen_imgs,shape = split_image_shamir(path,n=n, r=r,max_value=250) # change r and n names 
 
-# idea have a varible to ask if they want to downsize/use homomorphism
-#   We can then have it break off inside the function if so to either function
-to_save = [Image.new("L", shape) for _ in range(n)]
-for i, img in enumerate(gen_imgs):
-    to_save[i].putdata(img)
-    to_save[i].save("share{}.bmp".format(i + 1))
+# idea have a varible to ask if they want to downsize/use homomorphism ************
+#   We can then have it break off inside the function if so to either function **********
+
+# to_save = [Image.new("L", shape) for _ in range(n)]
+# for i, img in enumerate(gen_imgs):
+#     to_save[i].putdata(img)
+#     to_save[i].save("share{}.bmp".format(i + 1))
 
 
 
@@ -119,6 +138,7 @@ for i, img in enumerate(gen_imgs):
 origin_img = decode(gen_imgs[0:r], list(range(1, r + 1)), r=r, n=n)
 
 
+# save output
 img = Image.new("L", shape, color=0)
 img.putdata(list(origin_img))
 img.save("reconstructed.bmp")
