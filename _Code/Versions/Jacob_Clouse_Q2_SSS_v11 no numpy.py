@@ -18,15 +18,29 @@ Required shares to retrieve the original image = 2
 import random
 from PIL import Image
 
+
+
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Functions
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-'''combine with encryption function, do image shares inside this'''
+# --- Function to split an image into shares using Shamir's Secret Sharing algorithm --- 
+def read_image(path):
+    img = Image.open(path).convert('L')
+    # img.show()
+    img_array = []
+    width, height = img.size
+    for y in range(height):
+        for x in range(width):
+            img_array.append(img.getpixel((x, y)))
+    return img_array, (width, height)
+
+
 # --- Function to read in an image, adjust to only 250 max values, and then output image data in an array --- 
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
-def set_image_max_pixel_value(path, n, r, max_value=None):
+def set_image_max_pixel_value(path, max_value=None):
     img = Image.open(path).convert('L')
+    # img.show()
     img_array = []
     width, height = img.size
     for y in range(height):
@@ -35,9 +49,13 @@ def set_image_max_pixel_value(path, n, r, max_value=None):
             if max_value is not None:
                 pixel = min(pixel, max_value)
             img_array.append(pixel)
+    return img_array, (width, height)
 
-    # grab coefficents
-    num_pixels = len(img_array) # merge or remove
+
+
+
+def polynomial(img, n, r):
+    num_pixels = len(img)
     coef = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(num_pixels)]
     gen_imgs = []
     for i in range(1, n + 1):
@@ -45,11 +63,9 @@ def set_image_max_pixel_value(path, n, r, max_value=None):
         img_ = []
         for p in range(num_pixels):
             base_sum = sum([coef[p][j] * base[j] for j in range(r-1)])
-            img_.append((img_array [p] + base_sum) % 251)
+            img_.append((img[p] + base_sum) % 251)
         gen_imgs.append(img_)
-    return gen_imgs,(width, height)
-
-
+    return gen_imgs
 
 
 def lagrange(x, y, num_points, x_test):
@@ -79,36 +95,8 @@ def decode(imgs, index, r, n):
     return img
 
 
-# REMEMBER TO REMOVE THIS!!!!
-'''
-def set_image_max_pixel_value(path, max_value=None):
-    img = Image.open(path).convert('L')
-    # img.show()
-    img_array = []
-    width, height = img.size
-    for y in range(height):
-        for x in range(width):
-            pixel = img.getpixel((x, y))
-            if max_value is not None:
-                pixel = min(pixel, max_value)
-            img_array.append(pixel)
-    return img_array, (width, height)
 
 
-def polynomial(img, n, r):
-    num_pixels = len(img)
-    coef = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(num_pixels)]
-    gen_imgs = []
-    for i in range(1, n + 1):
-        base = [i ** j for j in range(1, r)]
-        img_ = []
-        for p in range(num_pixels):
-            base_sum = sum([coef[p][j] * base[j] for j in range(r-1)])
-            img_.append((img[p] + base_sum) % 251)
-        gen_imgs.append(img_)
-    return gen_imgs
-
-'''
 
 
 
@@ -142,14 +130,9 @@ if __name__ == "__main__":
     path = "1.bmp"
     n = 5
     r = 3
-    
-
-    # img_flattened, shape = set_image_max_pixel_value(path,max_value=250)
-    # gen_imgs = polynomial(img_flattened, n=n, r=r)
-    gen_imgs,shape = set_image_max_pixel_value(path,n=n, r=r,max_value=250)
-
-
-
+    # img_flattened, shape = read_image(path)
+    img_flattened, shape = set_image_max_pixel_value(path,max_value=250)
+    gen_imgs = polynomial(img_flattened, n=n, r=r)
     to_save = [Image.new("L", shape) for _ in range(n)]
     for i, img in enumerate(gen_imgs):
         to_save[i].putdata(img)
@@ -161,3 +144,46 @@ img.putdata(list(origin_img))
 img.save("test2_origin.jpeg")
 
 
+
+
+
+
+
+
+
+
+
+
+'''
+# header_data, image_data = split_image_shamir(inputImage)
+
+sys.set_int_max_str_digits(1000000)
+
+# Encrypt the image
+shares_stuff,header_stuff = encrypt_image(new250Image, n, k)
+# print(shares)
+
+
+# # open a file for writing tuple info
+# with open('my_shares_output.txt', 'w') as f:
+#     # iterate over the list and write each item to the file
+#     for tuple1 in shares_stuff:
+#         f.write(str(tuple1) + '\n\n\n')
+save_shares_as_bitmaps(shares_stuff,header_stuff)
+
+
+
+# Decrypt the image
+shares_from_bitmaps = read_shares_from_bitmaps(2)
+decrypted_data = decrypt_image(shares_from_bitmaps)
+
+# Save the decrypted image to a file
+with open("decrypted_image.bmp", "wb") as f:
+    f.write(header_stuff + decrypted_data)
+
+print("It worked!")
+
+# 1 - get it so that the header info is opened as well in the data
+# 2 - look at the decrypt data and the save data and then append the new data to the shares,
+# 3 - try opening the shares, split off the header, recombine and decrypted, save with new header
+'''

@@ -25,7 +25,7 @@ from PIL import Image
 '''combine with encryption function, do image shares inside this'''
 # --- Function to read in an image, adjust to only 250 max values, and then output image data in an array --- 
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
-def set_image_max_pixel_value(path, n, r, max_value=None):
+def set_image_max_pixel_value(path, max_value=None, ):
     img = Image.open(path).convert('L')
     img_array = []
     width, height = img.size
@@ -35,9 +35,11 @@ def set_image_max_pixel_value(path, n, r, max_value=None):
             if max_value is not None:
                 pixel = min(pixel, max_value)
             img_array.append(pixel)
+    return img_array, (width, height)
 
-    # grab coefficents
-    num_pixels = len(img_array) # merge or remove
+
+def polynomial(img, n, r):
+    num_pixels = len(img)
     coef = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(num_pixels)]
     gen_imgs = []
     for i in range(1, n + 1):
@@ -45,11 +47,9 @@ def set_image_max_pixel_value(path, n, r, max_value=None):
         img_ = []
         for p in range(num_pixels):
             base_sum = sum([coef[p][j] * base[j] for j in range(r-1)])
-            img_.append((img_array [p] + base_sum) % 251)
+            img_.append((img[p] + base_sum) % 251)
         gen_imgs.append(img_)
-    return gen_imgs,(width, height)
-
-
+    return gen_imgs
 
 
 def lagrange(x, y, num_points, x_test):
@@ -142,14 +142,9 @@ if __name__ == "__main__":
     path = "1.bmp"
     n = 5
     r = 3
-    
-
-    # img_flattened, shape = set_image_max_pixel_value(path,max_value=250)
-    # gen_imgs = polynomial(img_flattened, n=n, r=r)
-    gen_imgs,shape = set_image_max_pixel_value(path,n=n, r=r,max_value=250)
-
-
-
+    # img_flattened, shape = read_image(path)
+    img_flattened, shape = set_image_max_pixel_value(path,max_value=250)
+    gen_imgs = polynomial(img_flattened, n=n, r=r)
     to_save = [Image.new("L", shape) for _ in range(n)]
     for i, img in enumerate(gen_imgs):
         to_save[i].putdata(img)

@@ -35,9 +35,10 @@ def set_image_max_pixel_value(path, n, r, max_value=None):
             if max_value is not None:
                 pixel = min(pixel, max_value)
             img_array.append(pixel)
-
-    # grab coefficents
-    num_pixels = len(img_array) # merge or remove
+    # return img_array, (width, height)
+# def polynomial(img, n, r):
+    # num_pixels = len(img)
+    num_pixels = len(img_array)
     coef = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(num_pixels)]
     gen_imgs = []
     for i in range(1, n + 1):
