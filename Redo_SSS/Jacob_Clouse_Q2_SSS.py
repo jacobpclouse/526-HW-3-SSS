@@ -2,18 +2,18 @@
 
 '''
 This program is a visual implimentation of:
-  __                              __                                 __                            
- /    /              /           /                        /         /    /              /          
-(___ (___  ___  _ _    ___      (___  ___  ___  ___  ___ (___      (___ (___  ___  ___    ___  ___ 
+  __                              __                                 __
+ /    /              /           /                        /         /    /              /
+(___ (___  ___  _ _    ___      (___  ___  ___  ___  ___ (___      (___ (___  ___  ___    ___  ___
     )|   )|   )| | )| |   )         )|___)|    |   )|___)|             )|   )|   )|   )| |   )|   )
- __/ |  / |__/||  / | |          __/ |__  |__  |    |__  |__        __/ |  / |__/||    | |  / |__/ 
-                                                                                              __/  
+ __/ |  / |__/||  / | |          __/ |__  |__  |    |__  |__        __/ |  / |__/||    | |  / |__/
+                                                                                              __/
 Total shares = 5
 Required shares to retrieve the original image = 2
 '''
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# Importing Libraries / Modules 
+# Importing Libraries / Modules
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import random
 from PIL import Image
@@ -23,7 +23,7 @@ import numpy as np
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-# --- Function to read in an image, adjust to only 250 max values, and generate shares --- 
+# --- Function to read in an image, adjust to only 250 max values, and generate shares ---
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
 def split_image_shamir(path,downscaleBool,n,r,max_value=None):
     # make sure that we don't have pixel values greater than 250, SOURCE: https://thepythonguru.com/python-builtin-functions/max/
@@ -54,9 +54,9 @@ def split_image_shamir(path,downscaleBool,n,r,max_value=None):
     # Reconstruction data
     array_bits = gen_imgs[0:r]
     decode_list = list(range(1, r + 1))
-    
+
     share_names = []
-    # Create Share value images 
+    # Create Share value images
     to_save = [Image.new("L", (width, height)) for _ in range(n)]
     for i, imgOut in enumerate(gen_imgs):
         to_save[i].putdata(imgOut)
@@ -151,7 +151,7 @@ def decode(imgs, index, r, n):
         y = [imgs[j][i] for j in range(r)]
         pixel = lagrange(x, y, r, 0) % 251
         img.append(pixel)
-        
+
     print("Decrypted Image Restored!")
     return img
 
@@ -162,8 +162,7 @@ def decode_downsize(imgs, index, r, n):
     assert len(imgs) >= r
     x = index
     # print(x)
-    print(len(imgs[0]))
-    # dim = len(imgs[0]) // 4
+    # print(len(imgs[0]))
     dim = len(imgs[0]) // 4
     img = []
     for i in range(dim):
@@ -171,7 +170,7 @@ def decode_downsize(imgs, index, r, n):
         # print(y)
         pixel = lagrange(x, y, r, 0) % 251
         img.append(pixel)
-        
+
     print("Decrypted Image Restored!")
     return img
 
@@ -186,7 +185,7 @@ def calculate_mae(img1_path, img2_path):
 
     # Calculate the sum of absolute differences and divide by the total number of pixels
     mae = np.sum(diff) / (img1.shape[0] * img1.shape[1])
-    print("Mean Average Error: ", mae)
+    print(f"Mean Average Error between {img1_path} & {img2_path}: {mae}")
 
     return mae
 
@@ -201,7 +200,7 @@ def myLogo():
     print("Dedicated to Peter Zlomek and Harely Alderson III")
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# MAIN 
+# MAIN
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 # myLogo()
@@ -211,50 +210,84 @@ path = "1.bmp"
 n = 5
 r = 3
 wantDownscale = True
+reconstructName = "reconstructed.bmp"
 
 '''ENCRYPTION'''
-gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(path,wantDownscale,n=n,r=r,max_value=250) # change r and n names 
-
-# idea have a varible to ask if they want to downsize/use homomorphism ************
-#   We can then have it break off inside the function if so to either function **********
+gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(path,wantDownscale,n=n,r=r,max_value=250) # change r and n names
 
 
-
-
-''' DECRYPTION'''  
-# NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED  
+''' DECRYPTION'''
+# NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED
 '''NO DOWNSCALE'''
 if wantDownscale == False:
     origin_img = decode(arr_bit, list_bit, r=r, n=n)
+    # save output
+    img = Image.new("L", shape, color=0)
+    img.putdata(list(origin_img))
+    img.save(reconstructName)
 else:
     '''DOWNSCALE'''
     # only 1/4 of length
-    # new_down_array = arr_bit[:len(arr_bit)//4]
     origin_img = decode_downsize(arr_bit, list_bit, r=r, n=n)
 
     # pass in width and height
-    mae_width = shape[0]
-    mae_height = shape[1]
+    # save output (width and height half)
+    img = Image.new("L", shape, color=0)
+    img.putdata(list(origin_img))
+    img.save(reconstructName)
 
-    print(f"Width: {mae_width}, Height: {mae_height}")
+    # MAE
+    for i in range(n):
+        shareName = f'share{i+1}.bmp'
+        ourMae = calculate_mae(reconstructName,shareName)
 
-    print(len(downscaled_array))
-    print(len(origin_img))
+'''
+    # JUST REOPEN THE IMAGE AGAIN AND GET ORIGIN VALS
+    I_s = np.array(Image.open(reconstructName).convert('RGB'))
+    # open the image file and get the RGBA data of the image
+    # I_s  = (Image.open(reconstructName)).getdata()
 
-    # img1 = np.array(downscaled_array) 
-    # img2 = np.array(origin_img)
-
-    # # Calculate the absolute difference between the pixel values of two images
-    # diff = np.abs(img1 - img2)
-
-    # # Calculate the sum of absolute differences and divide by the total number of pixels
-    # mae = np.sum(diff) / (img1.shape[0] * img1.shape[1])
-    # print(f'MAE: {mae}')
-
-# save output
-img = Image.new("L", shape, color=0)
-img.putdata(list(origin_img))
-img.save("reconstructed.bmp")
+    # convert the arrays to 1d arrays
+    I_o = [[t[0] for t in inner_list] for inner_list in downscaled_array]
 
 
-# calc MAE
+    # open a file for writing array values
+    with open('new_list_output.txt', 'w') as file1:
+        # iterate through the array and write each value to a new line in the file
+        for value1 in I_o:
+            file1.write(str(value1) + '\n')
+
+    # open a file for writing values 2
+    with open('output_array_output.txt', 'w') as file2:
+        # iterate through the array and write each value to a new line in the file
+        for value2 in I_s:
+            file2.write(str(value2) + '\n')
+
+    # print(downscaled_array)
+    # print(origin_img)
+
+    # print(f"Width: {mae_width}, Height: {mae_height}")
+    # print(len(downscaled_array))
+    # print(len(origin_img))
+
+    # pass in width and height
+
+    # I_o = np.array(downscaled_array)
+    # I_s = np.array(output_array)
+    # if I_o.shape != I_s.shape:
+    #     raise ValueError("Arrays must have the same shape")
+    h = len(I_s)
+    w = 3
+    # w, h = I_s.shape # Assuming both arrays have the same shape
+    total_error = 0
+    for i in range(w):
+        for j in range(h):
+            # if i >= w or j >= h:
+            #     raise IndexError(f"Index ({i}, {j}) out of bounds for array")
+            total_error += abs(I_o[i][j] - I_s[i][j])
+    mae = total_error / (w * h)
+    print(f'Our MAE is: {mae}')
+'''
+
+
+
