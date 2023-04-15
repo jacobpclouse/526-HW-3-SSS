@@ -25,9 +25,9 @@ import numpy as np
 
 # --- Function to read in an image, adjust to only 250 max values, and generate shares ---
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
-def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
+def split_image_shamir(path,downscaleBool,n,r,max_value=None):
     # make sure that we don't have pixel values greater than 250, SOURCE: https://thepythonguru.com/python-builtin-functions/max/
-    img = Image.open(inputImage).convert('L')
+    img = Image.open(path).convert('L')
     img_array = []
     width, height = img.size
     for y in range(height):
@@ -206,21 +206,21 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = "1.bmp"
-totalNumberOfShares = 5
-minNumberOfShares = 3
+path = "1.bmp"
+n = 5
+r = 3
 wantDownscale = True
 reconstructName = "reconstructed.bmp"
 
 '''ENCRYPTION'''
-gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
+gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(path,wantDownscale,n=n,r=r,max_value=250) # change r and n names
 
 
 ''' DECRYPTION'''
 # NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED
 '''NO DOWNSCALE'''
 if wantDownscale == False:
-    origin_img = decode(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
+    origin_img = decode(arr_bit, list_bit, r=r, n=n)
     # save output
     img = Image.new("L", shape, color=0)
     img.putdata(list(origin_img))
@@ -228,7 +228,7 @@ if wantDownscale == False:
 else:
     '''DOWNSCALE'''
     # only 1/4 of length
-    origin_img = decode_downsize(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
+    origin_img = decode_downsize(arr_bit, list_bit, r=r, n=n)
 
     # pass in width and height
     # save output (width and height half)
@@ -237,7 +237,7 @@ else:
     img.save(reconstructName)
 
     # MAE
-    for i in range(totalNumberOfShares):
+    for i in range(n):
         shareName = f'share{i+1}.bmp'
         ourMae = calculate_mae(reconstructName,shareName)
 

@@ -207,20 +207,20 @@ def myLogo():
 
 # LET THE USER SET THESE with input
 useThisImage = "1.bmp"
-totalNumberOfShares = 5
-minNumberOfShares = 3
+n = 5
+r = 3
 wantDownscale = True
 reconstructName = "reconstructed.bmp"
 
 '''ENCRYPTION'''
-gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
+gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(useThisImage,wantDownscale,n=n,r=r,max_value=250) # change r and n names
 
 
 ''' DECRYPTION'''
 # NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED
 '''NO DOWNSCALE'''
 if wantDownscale == False:
-    origin_img = decode(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
+    origin_img = decode(arr_bit, list_bit, r=r, n=n)
     # save output
     img = Image.new("L", shape, color=0)
     img.putdata(list(origin_img))
@@ -228,7 +228,7 @@ if wantDownscale == False:
 else:
     '''DOWNSCALE'''
     # only 1/4 of length
-    origin_img = decode_downsize(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
+    origin_img = decode_downsize(arr_bit, list_bit, r=r, n=n)
 
     # pass in width and height
     # save output (width and height half)
@@ -237,7 +237,7 @@ else:
     img.save(reconstructName)
 
     # MAE
-    for i in range(totalNumberOfShares):
+    for i in range(n):
         shareName = f'share{i+1}.bmp'
         ourMae = calculate_mae(reconstructName,shareName)
 
