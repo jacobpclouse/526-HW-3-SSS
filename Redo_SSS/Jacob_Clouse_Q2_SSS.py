@@ -64,6 +64,7 @@ def split_image_shamir(path,downscaleBool,n,r,max_value=None):
         to_save[i].save(name_of_share)
         share_names.append(name_of_share)
 
+    new_array_boi = []
     # checks to see if downscaling is active
     if downscaleBool == True:
         '''DOWN SCALING'''
@@ -81,7 +82,7 @@ def split_image_shamir(path,downscaleBool,n,r,max_value=None):
 
         print("Encrypted Shares Generated!")
 
-    return gen_imgs,(width, height),array_bits,decode_list
+    return gen_imgs,(width, height),array_bits,decode_list,new_array_boi
 
 
 # --- Downscale Image Method ---
@@ -212,7 +213,7 @@ r = 3
 wantDownscale = True
 
 '''ENCRYPTION'''
-gen_imgs,shape,arr_bit,list_bit = split_image_shamir(path,wantDownscale,n=n,r=r,max_value=250) # change r and n names 
+gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(path,wantDownscale,n=n,r=r,max_value=250) # change r and n names 
 
 # idea have a varible to ask if they want to downsize/use homomorphism ************
 #   We can then have it break off inside the function if so to either function **********
@@ -226,9 +227,29 @@ gen_imgs,shape,arr_bit,list_bit = split_image_shamir(path,wantDownscale,n=n,r=r,
 if wantDownscale == False:
     origin_img = decode(arr_bit, list_bit, r=r, n=n)
 else:
+    '''DOWNSCALE'''
     # only 1/4 of length
     # new_down_array = arr_bit[:len(arr_bit)//4]
     origin_img = decode_downsize(arr_bit, list_bit, r=r, n=n)
+
+    # pass in width and height
+    mae_width = shape[0]
+    mae_height = shape[1]
+
+    print(f"Width: {mae_width}, Height: {mae_height}")
+
+    print(len(downscaled_array))
+    print(len(origin_img))
+
+    # img1 = np.array(downscaled_array) 
+    # img2 = np.array(origin_img)
+
+    # # Calculate the absolute difference between the pixel values of two images
+    # diff = np.abs(img1 - img2)
+
+    # # Calculate the sum of absolute differences and divide by the total number of pixels
+    # mae = np.sum(diff) / (img1.shape[0] * img1.shape[1])
+    # print(f'MAE: {mae}')
 
 # save output
 img = Image.new("L", shape, color=0)
