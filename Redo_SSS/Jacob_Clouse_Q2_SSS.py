@@ -32,7 +32,7 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
     width, height = imgOpened.size
     for y in range(height):
         for x in range(width):
-            pixel = img.getpixel((x, y))
+            pixel = imgOpened.getpixel((x, y))
             if max_value is not None:
                 pixel = min(pixel, max_value)
             openedImageArray.append(pixel)
