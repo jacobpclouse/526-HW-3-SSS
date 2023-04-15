@@ -27,26 +27,26 @@ import numpy as np
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
 def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
     # make sure that we don't have pixel values greater than 250, SOURCE: https://thepythonguru.com/python-builtin-functions/max/
-    img = Image.open(inputImage).convert('L')
-    img_array = []
-    width, height = img.size
+    imgOpened = Image.open(inputImage).convert('L')
+    openedImageArray = []
+    width, height = imgOpened.size
     for y in range(height):
         for x in range(width):
             pixel = img.getpixel((x, y))
             if max_value is not None:
                 pixel = min(pixel, max_value)
-            img_array.append(pixel)
+            openedImageArray.append(pixel)
 
     # grab coefficents
     # SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/
-    coef = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(len(img_array))]
+    coef = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(len(openedImageArray))]
     gen_imgs = []
     for i in range(1, n + 1):
         base = [i ** j for j in range(1, r)]
         img_ = []
-        for p in range(len(img_array)):
+        for p in range(len(openedImageArray)):
             base_sum = sum([coef[p][j] * base[j] for j in range(r-1)])
-            img_.append((img_array [p] + base_sum) % 251)
+            img_.append((openedImageArray [p] + base_sum) % 251)
         gen_imgs.append(img_)
 
 
