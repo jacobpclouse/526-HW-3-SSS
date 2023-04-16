@@ -27,3 +27,4 @@ If you read an image as a byte stream, it reads the header file
 - BMP Files Microsoft Bitmap files: https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
 - Image Resizing with OpenCV: https://learnopencv.com/image-resizing-with-opencv/
 - ****Shamir's secret sharing homomorphism for different degree polynomials: https://crypto.stackexchange.com/questions/102465/shamirs-secret-sharing-homomorphism-for-different-degree-polynomials
+- Cropping Images in Python With Pillow and OpenCV: https://cloudinary.com/guides/automatic-image-cropping/cropping-images-in-python-with-pillow-and-opencv
