@@ -18,6 +18,7 @@ Required shares to retrieve the original image = 2
 import random
 from PIL import Image
 import numpy as np
+import cv2
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Functions
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -121,42 +122,43 @@ def downscale_image_original(orig_image, width, height):
 
 
 # --- Downscale Image Method 2 ---
-def downscale_image(orig_image, width, height):
-    # Open the image
-    img = Image.open(orig_image)
+def downscale_image(inputImage, width_in, height_in):
+    # print(f"Need to make the image: {(width_in//2)} by {(height_in//2)}")
 
-    # Downsize the image by a factor of 2
-    # img = img.resize((width//2, img.height//2))
+    # needs to be black and white before using
+    # SOURCE: Image Resizing with OpenCV: https://learnopencv.com/image-resizing-with-opencv/
+    cvImageOriginal = cv2.imread(inputImage)
 
-    # Convert the image to grayscale
-    # img = img.convert('L')
-    half_width = width // 2
-    half_height = height // 2
+    # Get the dimensions of the image
+    height, width, channels = cvImageOriginal.shape
 
-    # Create a new image to hold the downsized image
-    new_img = Image.new('L', (half_width, half_height))
+    # Downsize the image by two
+    half_height, half_width = int(height/2), int(width/2)
 
-    # Loop through each pixel in the downsized image and average the values of the neighboring pixels
-    for y in range(0, half_height, 2):
-        for x in range(0, half_width, 2):
-            # Get the values of the four neighboring pixels
-            pixel1 = img.getpixel((x, y))
-            pixel2 = img.getpixel((x+1, y))
-            pixel3 = img.getpixel((x, y+1))
-            pixel4 = img.getpixel((x+1, y+1))
+    # Create a new image with the downsampled dimensions
+    downsampledcvImageOriginal = np.zeros((half_height, half_width, channels), dtype=np.uint8)
 
-            # Average the values of the four neighboring pixels and take the result mod 251
-            average_value = (pixel1 + pixel2 + pixel3 + pixel4) // 4 % 251
+    new_array_pixel_values = []
+    # Iterate over the downsampled image and average the neighboring pixels
+    for i in range(half_height):
+        for j in range(half_width):
+            # Calculate the indices of the four neighboring pixels
+            top_left = (i*2, j*2)
+            top_right = (i*2, j*2+1)
+            bottom_left = (i*2+1, j*2)
+            bottom_right = (i*2+1, j*2+1)
+            
+            # Average the pixel values of the four neighbors and take modulo 251
+            pixel_value = (cvImageOriginal[top_left] + cvImageOriginal[top_right] + cvImageOriginal[bottom_left] + cvImageOriginal[bottom_right]) // 4 % 251
+            
+            # Assign the new pixel value to the downsampled image
+            downsampledcvImageOriginal[i, j] = pixel_value
 
-            # Set the value of the corresponding pixel in the new image
-            new_img.putpixel((x, y), average_value)
+            new_array_pixel_values.append(pixel_value)
 
-    # Display the new image
-    # new_img.show()
-
-    # Save the new image to a file
-    new_img.save('output.bmp')
-
+    # Save the downsampled image to a file and return the values
+    cv2.imwrite(inputImage, downsampledcvImageOriginal)
+    return half_width, half_height, new_array_pixel_values
 
 
 
@@ -201,21 +203,43 @@ def decode(imgs, index, r, n):
 
 # --- Function to decode downsized pics ---
 def decode_downsize(imgs, index, r, n):
-    # you can also just re open up the share by passing in the name and get the dimensions that way
-    assert len(imgs) >= r
-    x = index
-    # print(x)
-    # print(len(imgs[0]))
-    dim = len(imgs[0]) // 4
-    img = []
-    for i in range(dim):
-        y = [imgs[j][i] for j in range(r)]
-        # print(y)
-        pixel = lagrange(x, y, r, 0) % 251
-        img.append(pixel)
+    # # you can also just re open up the share by passing in the name and get the dimensions that way
+    # assert len(imgs) >= r
+    # x = index
+    # # print(x)
+    # # print(len(imgs[0]))
+    # dim = len(imgs[0]) // 4
+    # img = []
+    # for i in range(dim):
+    #     y = [imgs[j][i] for j in range(r)]
+    #     # print(y)
+    #     pixel = lagrange(x, y, r, 0) % 251
+    #     img.append(pixel)
 
-    print("Decrypted Image Restored!")
+    # print("Decrypted Image Restored!")
+    # return img
+
+
+    # Make sure there are enough shares to decode the image
+    if len(imgs) < r:
+        raise ValueError(f"Not enough shares to decode image (need {r}, got {len(imgs)})")
+    
+    # Set the x-coordinate of the pixel to decode
+    # x = index
+    
+    # Calculate the width of the image
+    img_width = len(imgs[0]) // 4
+    
+    # Reconstruct the pixel values
+    img = []
+    for col_idx in range(img_width):
+        shares_to_use = [imgs[share_idx][col_idx] for share_idx in range(r)]
+        pixel_value = lagrange(index, shares_to_use, r, 0) % 251
+        img.append(pixel_value)
+
+    print("Image reconstruction complete!")
     return img
+
 
 # --- Function to calculate the MAE ---
 def calculate_mae(img1_path, img2_path):
@@ -249,11 +273,11 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = "blackbuck.bmp"
+useThisImage = "1.bmp"
 totalNumberOfShares = 5
 minNumberOfShares = 3
 wantDownscale = True
-reconstructName = "reconstructed.bmp"
+reconstructName = f"reconstructed_{useThisImage}"
 
 '''ENCRYPTION'''
 gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
@@ -282,7 +306,7 @@ else:
     # MAE
     for i in range(totalNumberOfShares):
         shareName = f'share{i+1}.bmp'
-        ourMae = calculate_mae(reconstructName,shareName)
+        ourMae = calculate_mae(f"{shape[1]}x{shape[0]}_{reconstructName}",shareName)
 
 '''
     # JUST REOPEN THE IMAGE AGAIN AND GET ORIGIN VALS
