@@ -1,21 +1,17 @@
 import numpy as np
 import cv2
 
-# needs to be black and white before using
-# SOURCE: Image Resizing with OpenCV: https://learnopencv.com/image-resizing-with-opencv/
-# Load the image
-cvImageOriginal = cv2.imread('blackbuck.bmp') # orig
-# cvImageOriginal = cv2.imread('blackbuck.bmp', cv2.IMREAD_GRAYSCALE)
-
+# Load the image in grayscale
+cvImageOriginal = cv2.imread('Only250.bmp', cv2.IMREAD_GRAYSCALE)
 
 # Get the dimensions of the image
-height, width, channels = cvImageOriginal.shape
+height, width = cvImageOriginal.shape
 
 # Downsize the image by two
 new_height, new_width = int(height/2), int(width/2)
 
 # Create a new image with the downsampled dimensions
-downsampledcvImageOriginal = np.zeros((new_height, new_width, channels), dtype=np.uint8)
+downsampled_cvImageOriginal = np.zeros((new_height, new_width), dtype=np.uint8)
 
 # Iterate over the downsampled image and average the neighboring pixels
 for i in range(new_height):
@@ -30,7 +26,7 @@ for i in range(new_height):
         pixel_value = (cvImageOriginal[top_left] + cvImageOriginal[top_right] + cvImageOriginal[bottom_left] + cvImageOriginal[bottom_right]) // 4 % 251
         
         # Assign the new pixel value to the downsampled image
-        downsampledcvImageOriginal[i, j] = pixel_value
+        downsampled_cvImageOriginal[i, j] = pixel_value
 
 # Save the downsampled image to a file
-cv2.imwrite('blackbuck_openCV_downscaled.bmp', downsampledcvImageOriginal)
+cv2.imwrite('Only250_openCV_downscaled.bmp', downsampled_cvImageOriginal)

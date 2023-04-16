@@ -73,8 +73,8 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
         '''DOWN SCALING'''
         print("Downscaling Activated!")
         for labels in share_names:
-            # new_width, new_height, new_array_boi = downscale_image(labels, width, height)
-            new_width, new_height, new_array_boi = downscale_image_original(labels, width, height)
+            new_width, new_height, new_array_boi = downscale_image(labels, width, height)
+
         width = new_width
         height = new_height
         # array_bits = new_array_boi
@@ -168,26 +168,7 @@ def downscale_image(inputImage, width_in, height_in):
 
 # --- Function to reconstruct the secret using Lagrange function ---
 # SOURCE: https://github.com/cfgnunes/numerical-methods-python/blob/main/interpolation.py
-'''CHANGE THE VARIABLES'''
 def lagrange(x, y, num_points, x_test):
-    l = [0] * num_points
-    for k in range(num_points):
-        l[k] = 1
-        for k_ in range(num_points):
-            if k != k_:
-                l[k] = l[k] * (x_test - x[k_]) / (x[k] - x[k_])
-            else:
-                pass
-    L = 0
-    for i in range(num_points):
-        L += y[i] * l[i]
-
-    # print("Lagrange Function Executed!") # TOO MANY PRINT OUTS
-    return L
-
-# --- Function to reconstruct the downscaled secret using Lagrange function ---
-'''CHANGE THE VARIABLES, reflow this!!!'''
-def downscaled_lagrange(x, y, num_points, x_test):
     l = [0] * num_points
     for k in range(num_points):
         l[k] = 1
@@ -208,7 +189,6 @@ def downscaled_lagrange(x, y, num_points, x_test):
 
 # --- Function to reconstruct the original image using the shares ---
 # SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/
-'''CHANGE THE VARIALBES'''
 def decode(imgs, index, r, n):
     assert len(imgs) >= r
     x = index
@@ -257,8 +237,6 @@ def decode_downsize(imgs, index, r, n):
     for col_idx in range(img_width):
         shares_to_use = [imgs[share_idx][col_idx] for share_idx in range(r)]
         pixel_value = lagrange(index, shares_to_use, r, 0) % 251
-        print(f"Print Pixel: {pixel_value}")
-        #pixel_value = downscaled_lagrange(index, shares_to_use, r, 0) % 251
         img.append(pixel_value)
 
     print("Image reconstruction complete!")
@@ -297,7 +275,7 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = "blackbuck.bmp"
+useThisImage = "1.bmp"
 totalNumberOfShares = 5
 minNumberOfShares = 3
 wantDownscale = True

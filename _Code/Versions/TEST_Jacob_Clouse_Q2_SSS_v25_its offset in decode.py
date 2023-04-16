@@ -254,7 +254,8 @@ def decode_downsize(imgs, index, r, n):
     
     # Reconstruct the pixel values
     img = []
-    for col_idx in range(img_width):
+    # ITS RECONSTRUCTION!!!!
+    for col_idx in range(0,img_width,2):
         shares_to_use = [imgs[share_idx][col_idx] for share_idx in range(r)]
         pixel_value = lagrange(index, shares_to_use, r, 0) % 251
         print(f"Print Pixel: {pixel_value}")
@@ -297,7 +298,7 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = "blackbuck.bmp"
+useThisImage = "Only250.bmp"
 totalNumberOfShares = 5
 minNumberOfShares = 3
 wantDownscale = True
