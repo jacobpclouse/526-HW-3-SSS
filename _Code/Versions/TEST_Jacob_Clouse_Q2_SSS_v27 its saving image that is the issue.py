@@ -208,7 +208,6 @@ def decode(imgs, index, r, n):
 
 
 # --- Function to decode downsized pics ---
-''' DO WE NEED TWO DOWNSIZE FUNCTIONS????'''
 def decode_downsize(imgs, index, r, n):
     # # you can also just re open up the share by passing in the name and get the dimensions that way
 
@@ -224,7 +223,7 @@ def decode_downsize(imgs, index, r, n):
     img = []
     # ITS RECONSTRUCTION!!!!
     # for col_idx in range(0,img_width,2):
-    for col_idx in range(0,img_width):
+    for col_idx in range(0,img_width,2):
         shares_to_use = [imgs[share_idx][col_idx] for share_idx in range(r)]
         pixel_value = lagrange(index, shares_to_use, r, 0) % 251
         # print(f"Print Pixel: {pixel_value}")
@@ -241,24 +240,6 @@ def decode_downsize(imgs, index, r, n):
 
     print("Image reconstruction complete!")
     return img
-
-# --- Function to crop output for MAE ---
-def crop_output(imageInput):
-    # Open the image file
-    image = Image.open(imageInput)
-
-    # Get the current dimensions of the image
-    current_width, current_height = image.size
-
-    # Set the dimensions for cropping to the upper left quarter
-    width = current_width // 2
-    height = current_height // 2
-
-    # Crop the image
-    cropped_image = image.crop((0, 0, width, height))
-
-    # Save the cropped image
-    cropped_image.save(imageInput)
 
 
 # --- Function to calculate the MAE ---
@@ -301,7 +282,7 @@ reconstructName = f"reconstructed_{useThisImage}"
 
 '''ENCRYPTION'''
 gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
-print(f"Orig Shape: {shape}")
+
 
 ''' DECRYPTION'''
 # NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED
@@ -314,29 +295,23 @@ if wantDownscale == False:
     img.save(reconstructName)
 else:
     '''DOWNSCALE'''
-
+    # only 1/4 of length
     origin_img = decode_downsize(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
-    # Save the decrypted image to a file
+
 
     # pass in width and height
     # save output (width and height half) -- get it from the start of the project
-    half_values_array = origin_img[::2] # Get every second element starting from the first
-    # half_values_array = origin_img[::4]
-    # print(f"Length of List: {len(list(origin_img))}")
-    # print(f"Output Array is {len(origin_img)}")
-    # print(f"Expecting Array that is {shape[0]*shape[1]}")
-    # print(f"half values array has {len(half_values_array)}")
-
-    # newShapeDim = (len(half_values_array)+54)//320
-    newShapeDim = (len(half_values_array))//320
-    newShape = ((newShapeDim),(newShapeDim)) # only works with square shapes
+    # need to remove half of the pixels, either remove manually or only use 1 for incriment
+    print(f"Output Array is {len(origin_img)}")
+    print(f"Expecting Array that is {shape[0]*shape[1]}")
+    newShapeDim = len(origin_img)//160
+    newShape = (newShapeDim,newShapeDim)
     print(newShape)
-
+    # print(f"Length:{origin_img}")
+    # # img = Image.new("L", shape, color=0)
     img = Image.new("L", newShape, color=0)
-
-    img.putdata(list(half_values_array))
+    img.putdata(list(origin_img))
     img.save(f"{shape[1]}x{shape[0]}_{reconstructName}")
-    crop_output(f"{shape[1]}x{shape[0]}_{reconstructName}")
 
     # MAE
     # for i in range(totalNumberOfShares):
