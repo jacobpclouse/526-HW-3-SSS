@@ -87,7 +87,7 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
 
     return gen_imgs,(width, height),array_bits,decode_list,new_array_boi
 
-'''
+
 # --- Downscale Image Method 1 ---
 def downscale_image_original(orig_image, width, height, shareNo):
     print(f"Downscaling {shareNo} With PILLOW...")
@@ -121,7 +121,7 @@ def downscale_image_original(orig_image, width, height, shareNo):
     new_img.save(orig_image)
     return half_width, half_height, new_array_bits
     # return down_image, down_width, down_height
-'''
+
 
 
 # --- Downscale Image Method 2 ---
@@ -262,38 +262,19 @@ def crop_output(imageInput):
 
 
 # --- Function to calculate the MAE ---
-def calculate_mae(resized_image,initial_resized_array):
-    print("Calculating MAE...")
-    outputImageCv = cv2.imread(resized_image) 
-    # outputImageCv = cv2.imread('image.png', cv2.IMREAD_UNCHANGED)
-    if outputImageCv.shape != initial_resized_array.shape:
-        outputImageCv.shape = cv2.resize(outputImageCv, initial_resized_array.shape[:2][::-1])
+def calculate_mae(img1_path, img2_path):
+    # Load the images and convert them to numpy arrays
+    img1 = np.array(Image.open(img1_path).convert('L')) # convert to grayscale
+    img2 = np.array(Image.open(img2_path).convert('L'))
 
-    # Calculate the absolute difference between the images
-    diff = cv2.absdiff(outputImageCv, initial_resized_array)
+    # Calculate the absolute difference between the pixel values of two images
+    diff = np.abs(img1 - img2)
 
-    # Convert the difference image to grayscale
-    gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+    # Calculate the sum of absolute differences and divide by the total number of pixels
+    mae = np.sum(diff) / (img1.shape[0] * img1.shape[1])
+    print(f"Mean Average Error between {img1_path} & {img2_path}: {mae}")
 
-    # Calculate the mean value of the grayscale image
-    mae = np.mean(gray)
-
-    print("Our Mean Average Error is:", mae)
-
-
-# def calculate_mae(img1_path, img2_path):
-#     # Load the images and convert them to numpy arrays
-#     img1 = np.array(Image.open(img1_path).convert('L')) # convert to grayscale
-#     img2 = np.array(Image.open(img2_path).convert('L'))
-
-#     # Calculate the absolute difference between the pixel values of two images
-#     diff = np.abs(img1 - img2)
-
-#     # Calculate the sum of absolute differences and divide by the total number of pixels
-#     mae = np.sum(diff) / (img1.shape[0] * img1.shape[1])
-#     print(f"Mean Average Error between {img1_path} & {img2_path}: {mae}")
-
-#     return mae
+    return mae
 
 # --- Function to print out my Logo ---
 def myLogo():
@@ -312,15 +293,16 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = '3.bmp'
+# useThisImage = "Only250.bmp"
+useThisImage = '1.bmp'
 totalNumberOfShares = 5
 minNumberOfShares = 3
 wantDownscale = True
 reconstructName = f"reconstructed_{useThisImage}"
 
 '''ENCRYPTION'''
-gen_imgs,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
-# print(f"Orig Shape: {shape}")
+gen_imgs,shape,arr_bit,list_bit,downscaled_array = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
+print(f"Orig Shape: {shape}")
 
 ''' DECRYPTION'''
 # NEED TO DO SEPERATE FUNCTION IF DOWNSCALING WAS REQUESTED
@@ -357,12 +339,7 @@ else:
     img.save(f"{shape[1]}x{shape[0]}_{reconstructName}")
     crop_output(f"{shape[1]}x{shape[0]}_{reconstructName}")
 
-    # --- MAE ---
-    # uses original number array returned from downsize and then opens up output image to compare against
-    # ASK PRADEEP IF YOU ARE DOING THIS RIGHT!!
-    calculate_mae(f"{shape[1]}x{shape[0]}_{reconstructName}",downscaled_array_to_compare)
-
-
+    # MAE
     # for i in range(totalNumberOfShares):
     #     # shareName = f'downsized_share{i+1}.bmp'
     #     shareName = f'share{i+1}.bmp'
