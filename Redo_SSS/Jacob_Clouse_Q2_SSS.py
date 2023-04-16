@@ -206,7 +206,7 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = "1.bmp"
+useThisImage = "blackbuck.bmp"
 totalNumberOfShares = 5
 minNumberOfShares = 3
 wantDownscale = True

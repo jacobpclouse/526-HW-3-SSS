@@ -24,3 +24,4 @@ If you read an image as a byte stream, it reads the header file
 - Int Object is Not Iterable – Python Error [Solved]: https://www.freecodecamp.org/news/int-object-is-not-iterable-python-error-solved/
 - williamium3000 / shamir-secret-image-sharing: https://github.com/williamium3000/shamir-secret-image-sharing
 - Lagrange Formula: https://github.com/cfgnunes/numerical-methods-python/blob/main/interpolation.py
+- BMP Files Microsoft Bitmap files: https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
