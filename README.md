@@ -25,3 +25,4 @@ If you read an image as a byte stream, it reads the header file
 - williamium3000 / shamir-secret-image-sharing: https://github.com/williamium3000/shamir-secret-image-sharing
 - Lagrange Formula: https://github.com/cfgnunes/numerical-methods-python/blob/main/interpolation.py
 - BMP Files Microsoft Bitmap files: https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
+- Image Resizing with OpenCV: https://learnopencv.com/image-resizing-with-opencv/
