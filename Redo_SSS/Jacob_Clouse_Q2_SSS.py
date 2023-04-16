@@ -234,7 +234,7 @@ else:
     # save output (width and height half)
     img = Image.new("L", shape, color=0)
     img.putdata(list(origin_img))
-    img.save(reconstructName)
+    img.save(f"{shape[1]}x{shape[0]}_{reconstructName}")
 
     # MAE
     for i in range(totalNumberOfShares):
