@@ -61,7 +61,9 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
     to_save = [Image.new("L", (width, height)) for _ in range(n)]
     for i, imgOut in enumerate(gen_imgs):
         to_save[i].putdata(imgOut)
-        name_of_share = "share{}.bmp".format(i + 1)
+        # name_of_share = "share{}.bmp".format(i + 1)
+        # if downscaleBool == True
+        name_of_share = f"share{i + 1}.bmp"
         to_save[i].save(name_of_share)
         share_names.append(name_of_share)
 
@@ -305,6 +307,7 @@ else:
 
     # MAE
     for i in range(totalNumberOfShares):
+        # shareName = f'downsized_share{i+1}.bmp'
         shareName = f'share{i+1}.bmp'
         ourMae = calculate_mae(f"{shape[1]}x{shape[0]}_{reconstructName}",shareName)
 

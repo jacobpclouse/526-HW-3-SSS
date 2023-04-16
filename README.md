@@ -26,3 +26,4 @@ If you read an image as a byte stream, it reads the header file
 - Lagrange Formula: https://github.com/cfgnunes/numerical-methods-python/blob/main/interpolation.py
 - BMP Files Microsoft Bitmap files: https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
 - Image Resizing with OpenCV: https://learnopencv.com/image-resizing-with-opencv/
+- ****Shamir's secret sharing homomorphism for different degree polynomials: https://crypto.stackexchange.com/questions/102465/shamirs-secret-sharing-homomorphism-for-different-degree-polynomials
