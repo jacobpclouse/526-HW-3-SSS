@@ -222,7 +222,7 @@ else:
 print('\n')
 
 '''ENCRYPTION'''
-image_array_generated_output,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
+image_array_generated_output,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) 
 # print(f"Orig Shape: {shape}")
 print('#------------#')
 
