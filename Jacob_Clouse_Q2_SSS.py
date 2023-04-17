@@ -319,7 +319,7 @@ def myLogo():
 useThisImage = '3.bmp'
 totalNumberOfShares = 5
 minNumberOfShares = 3
-wantDownscale = True
+wantDownscale = False
 
 
 reconstructName = f"reconstructed_{useThisImage}"
@@ -337,7 +337,7 @@ if wantDownscale == False:
     # save output
     img = Image.new("L", shape, color=0)
     img.putdata(list(origin_img))
-    img.save(reconstructName)
+    img.save(f"{shape[1]}x{shape[0]}_{reconstructName}")
 else:
     '''DOWNSCALE'''
 
