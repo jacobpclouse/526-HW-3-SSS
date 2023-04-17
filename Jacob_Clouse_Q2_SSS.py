@@ -77,7 +77,9 @@ def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=N
     # checks to see if downscaling is active
     if downscaleBool == True:
         '''DOWN SCALING'''
+        print('#------------#')
         print("Downscaling Shares Activated!")
+        print('#------------#')
         for labels in share_names:
             new_width, new_height, new_array_boi = downscale_image(labels,labels,False)
         width = new_width
@@ -86,6 +88,7 @@ def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=N
 
     else:
         print("No Downscaling Requested!")
+        print('#------------#')
 
 
         print("Encrypted Shares Generated!")
