@@ -140,11 +140,13 @@ def downscale_image(inputImage,shareNo,isControl):
 def lagrange_calc_shamir(x, y, number_of_points, use_this_X):
     setupArray = [0] * number_of_points
     lagrange_out = 0
-    for min in range(number_of_points):
-        setupArray[min] = 1
-        for minInception in range(number_of_points):
-            if min != minInception:
-                setupArray[min] = setupArray[min] * (use_this_X- x[minInception]) / (x[min] - x[minInception])
+    for k in range(number_of_points):
+        setupArray[k] = 1
+        for k_ in range(number_of_points):
+            if k != k_:
+                setupArray[k] = setupArray[k] * (use_this_X- x[k_]) / (x[k] - x[k_])
+            else:
+                pass
     for i in range(number_of_points):
         lagrange_out += y[i] * setupArray[i]
 
