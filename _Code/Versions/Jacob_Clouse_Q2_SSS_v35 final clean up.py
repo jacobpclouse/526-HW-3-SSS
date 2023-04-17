@@ -212,9 +212,14 @@ def myLogo():
 myLogo()
 print("\n")
 
+# LET THE USER SET THESE with input
+# useThisImage = '3.bmp'
+# totalNumberOfShares = 5
+# minNumberOfShares = 3
+# wantDownscale = True
 
 totalNumberOfShares = 5
-minNumberOfShares = 2
+minNumberOfShares = 3
 useThisImage = input("Enter in your input bitmap name (with extension): ") # input image name
 reconstructName = f"reconstructed_{useThisImage}" # output image name
 downscaledName = f"downscaled_control_{useThisImage}" # for intial downscale
