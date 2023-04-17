@@ -29,7 +29,7 @@ import cv2
 
 # --- Function to read in an image, adjust to only 250 max values, and generate shares ---
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
-def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=None):
+def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
     # make sure that we don't have pixel values greater than 250, SOURCE: https://thepythonguru.com/python-builtin-functions/max/
     imageOpened = Image.open(inputImage).convert('L')
     openedImageArray = []
@@ -40,10 +40,6 @@ def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=N
             if max_value is not None:
                 pixel = min(pixel, max_value)
             openedImageArray.append(pixel)
-
-    if downscaleBool == True:
-    # Downscaling original image
-        control_width, control_height, control_array_boi = downscale_image(inputImage,downscaleControl,True)
 
     # grab coefficients
     # SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/
@@ -77,9 +73,9 @@ def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=N
     # checks to see if downscaling is active
     if downscaleBool == True:
         '''DOWN SCALING'''
-        print("Downscaling Shares Activated!")
+        print("Downscaling Activated!")
         for labels in share_names:
-            new_width, new_height, new_array_boi = downscale_image(labels,labels,False)
+            new_width, new_height, new_array_boi = downscale_image(labels, width, height,labels)
         width = new_width
         height = new_height
         # array_bits = new_array_boi
@@ -94,10 +90,9 @@ def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=N
 
 
 
-# --- Downscale Image Method ---
+# --- Downscale Image Method 2 ---
 # SOURCE: Image Resizing with OpenCV: https://learnopencv.com/image-resizing-with-opencv/
-# def downscale_image(inputImage, width_in, height_in,shareNo):
-def downscale_image(inputImage,shareNo,isControl):
+def downscale_image(inputImage, width_in, height_in,shareNo):
     print(f"Downscaling {shareNo} With OpenCV...")
     # print(f"Need to make the image: {(width_in//2)} by {(height_in//2)}")
     cvImageOriginal = cv2.imread(inputImage) # needs to be black and white before using, but we have already taken care of that
@@ -121,13 +116,9 @@ def downscale_image(inputImage,shareNo,isControl):
             downsampledcvImageOriginal[i, j] = pixel_value
 
             # new_array_pixel_values.append(pixel_value)
-    if isControl == True:
-        # Save the downsampled image to a file and return the values - for control image
-        cv2.imwrite(downscaledName, downsampledcvImageOriginal)
-    else: 
-        # Save the downsampled image to a file and return the values - overwrite
-        cv2.imwrite(inputImage, downsampledcvImageOriginal)
 
+    # Save the downsampled image to a file and return the values
+    cv2.imwrite(inputImage, downsampledcvImageOriginal)
     return half_width, half_height, downsampledcvImageOriginal #use the last value to get the MAE
 
 
@@ -180,14 +171,22 @@ def crop_output(imageInput):
 
 
 # --- Function to calculate our MAE ---
-def calc_mae_numpy(inputImage, controlImage):
-    image_O = np.array(Image.open(controlImage)) # opens control image
-    image_S = np.array(Image.open(inputImage)) # opens reconstructed image
-    # print(f"Len of control: {len(image_O)}") # prints out len for debuging
-    # print(f"Len of control: {len(image_S)}")
-    outputMAE= np.mean(np.abs(image_O - image_O)) # does MAE calc
-    print(f"Output MAE: {outputMAE}") # prints out MAE
+def calc_mae_numpy(inputImage, pixelArrayValues):
+    outputImage = cv2.imread(inputImage) # read image in from file
+    outputImageCv = outputImage.flatten()
+    pixelArrayValues = np.array(pixelArrayValues) # added to see if this will more accurately look at mae
+    pixelArrayValuesFlatten = pixelArrayValues.flatten()
+    outputMAE = np.mean(np.abs(outputImageCv - pixelArrayValuesFlatten)) # use formula to find the 
+    print(f"Output MAE: {outputMAE}")
     return outputMAE
+
+
+
+    # outputImageCv = cv2.imread(inputImage) # read image in from file
+    # pixelArrayValues = np.array(pixelArrayValues) # added to see if this will more accurately look at mae
+    # outputMAE = np.mean(np.abs(outputImageCv - pixelArrayValues)) # use formula to find the 
+    # print(f"Output MAE: {outputMAE}")
+    # return outputMAE
 
 
 
@@ -220,7 +219,6 @@ totalNumberOfShares = 5
 minNumberOfShares = 3
 useThisImage = input("Enter in your input bitmap name (with extension): ") # input image name
 reconstructName = f"reconstructed_{useThisImage}" # output image name
-downscaledName = f"downscaled_control_{useThisImage}" # for intial downscale
 
 wantDownscale = True
 wantDownscaleString = input("Do you want to downscale? (yes or no): ")
@@ -234,7 +232,7 @@ else:
 print('\n')
 
 '''ENCRYPTION'''
-image_array_generated_output,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,downscaledName,max_value=250) 
+image_array_generated_output,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) 
 # print(f"Orig Shape: {shape}")
 print('#------------#')
 
@@ -267,8 +265,9 @@ else:
 
 
     ''' CALC MAE '''
-    # uses output of reconstruction against the control downsize
-    calc_mae_numpy(f"{shape[1]}x{shape[0]}_{reconstructName}",downscaledName)
+    # uses original number array returned from downsize and then opens up output image to compare against
+    # ASK PRADEEP IF YOU ARE DOING THIS RIGHT!!
+    calc_mae_numpy(f"{shape[1]}x{shape[0]}_{reconstructName}",downscaled_array_to_compare)
     # As MAE was only specified to be done for question 2, i did not include it for question 1
 
 
