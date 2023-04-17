@@ -31,12 +31,12 @@ import cv2
 # SOURCE: http://paulbourke.net/dataformats/bitmaps/
 def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
     # make sure that we don't have pixel values greater than 250, SOURCE: https://thepythonguru.com/python-builtin-functions/max/
-    imgOpened = Image.open(inputImage).convert('L')
+    imageOpened = Image.open(inputImage).convert('L')
     openedImageArray = []
-    width, height = imgOpened.size
+    width, height = imageOpened.size
     for y in range(height):
         for x in range(width):
-            pixel = imgOpened.getpixel((x, y))
+            pixel = imageOpened.getpixel((x, y))
             if max_value is not None:
                 pixel = min(pixel, max_value)
             openedImageArray.append(pixel)
@@ -46,11 +46,11 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
     coefficients = [[random.randint(0, 250) for _ in range(r-1)] for _ in range(len(openedImageArray))]
     image_array_generated = []
     for i in range(1, n + 1):
-        base = [i ** j for j in range(1, r)]
+        initial = [i ** j for j in range(1, r)]
         imageList_ = []
         for p in range(len(openedImageArray)):
-            base_sum = sum([coefficients[p][j] * base[j] for j in range(r-1)])
-            imageList_.append((openedImageArray [p] + base_sum) % 251)
+            sum_initial = sum([coefficients[p][j] * initial[j] for j in range(r-1)])
+            imageList_.append((openedImageArray [p] + sum_initial) % 251)
         image_array_generated.append(imageList_)
 
 
@@ -61,13 +61,12 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
 
     share_names = []
     # Create Share value images
-    to_save = [Image.new("L", (width, height)) for _ in range(n)]
-    for i, imgOut in enumerate(image_array_generated):
-        to_save[i].putdata(imgOut)
+    output_this = [Image.new("L", (width, height)) for _ in range(n)]
+    for i, image_Out in enumerate(image_array_generated):
+        output_this[i].putdata(image_Out)
         # name_of_share = "share{}.bmp".format(i + 1)
-        # if downscaleBool == True
         name_of_share = f"share{i + 1}.bmp"
-        to_save[i].save(name_of_share)
+        output_this[i].save(name_of_share)
         share_names.append(name_of_share)
 
     new_array_boi = []
@@ -77,7 +76,6 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
         print("Downscaling Activated!")
         for labels in share_names:
             new_width, new_height, new_array_boi = downscale_image(labels, width, height,labels)
-            #new_width, new_height, new_array_boi = downscale_image_original(labels, width, height, labels)
         width = new_width
         height = new_height
         # array_bits = new_array_boi
@@ -156,10 +154,7 @@ def downscale_image(inputImage, width_in, height_in,shareNo):
 
     # Save the downsampled image to a file and return the values
     cv2.imwrite(inputImage, downsampledcvImageOriginal)
-    # return half_width, half_height, new_array_pixel_values
     return half_width, half_height, downsampledcvImageOriginal #use the last value to get the MAE
-
-
 
 
 
@@ -201,6 +196,7 @@ def decrypt_image_shamir(input_image, list_values, r, n):
     return image_pixel_array
 
 
+
 # --- Function to crop output for MAE ---
 # SOURCE: Cropping Images in Python With Pillow and OpenCV: https://cloudinary.com/guides/automatic-image-cropping/cropping-images-in-python-with-pillow-and-opencv
 def crop_output(imageInput):
@@ -212,12 +208,14 @@ def crop_output(imageInput):
     cropped_image.save(imageInput)# Save the cropped image
 
 
+
 # --- Function to calculate our MAE ---
 def calc_mae_numpy(inputImage, pixelArrayValues):
     outputImageCv = cv2.imread(inputImage) # read image in from file
     outputMAE = np.mean(np.abs(outputImageCv - pixelArrayValues)) # use formula to find the 
     print(f"Output MAE: {outputMAE}")
     return outputMAE
+
 
 
 # --- Function to print out my Logo ---
@@ -230,6 +228,8 @@ def myLogo():
     print(" \___/ \__,_|\___\___/|_.__/  \____/|_|\___/ \__,_|___/\___| ")
     print("Dedicated to Peter Zlomek and Harely Alderson III")
 
+
+
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # MAIN
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -237,13 +237,26 @@ def myLogo():
 # myLogo()
 
 # LET THE USER SET THESE with input
-useThisImage = '3.bmp'
+# useThisImage = '3.bmp'
+# totalNumberOfShares = 5
+# minNumberOfShares = 3
+# wantDownscale = True
+
 totalNumberOfShares = 5
 minNumberOfShares = 3
+useThisImage = input("Enter in your input bitmap name (with extension): ") # input image name
+reconstructName = f"reconstructed_{useThisImage}" # output image name
+
 wantDownscale = True
-
-
-reconstructName = f"reconstructed_{useThisImage}"
+wantDownscaleString = input("Do you want to downscale? (yes or no): ")
+wantDownscaleString = wantDownscaleString.lower()
+# Set the downscale boolean variable based on the user's response
+if wantDownscaleString == "yes":
+    wantDownscale = True
+else:
+    wantDownscale = False
+# print(f"Downscale = {wantDownscale}")
+# print('\n')
 
 '''ENCRYPTION'''
 image_array_generated_output,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
