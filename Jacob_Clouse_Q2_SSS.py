@@ -88,41 +88,6 @@ def split_image_shamir(inputImage,downscaleBool,n,r,max_value=None):
 
     return image_array_generated,(width, height),array_bits,decode_list,new_array_boi
 
-'''
-# --- Downscale Image Method 1 ---
-def downscale_image_original(orig_image, width, height, shareNo):
-    print(f"Downscaling {shareNo} With PILLOW...")
-    # Open the image and convert to the RGB mode, halve dimensions
-    img = Image.open(orig_image).convert('RGB')
-    half_width = width // 2
-    half_height = height // 2
-    new_img = Image.new('RGB', (half_width, half_height))
-    new_array_bits = []
-    # Iterate over the new image pixels
-    for x in range(half_width):
-        for y in range(half_height):
-            # Get the corresponding 4 pixels in the original image
-            pixels = [
-                img.getpixel((2*x, 2*y)),
-                img.getpixel((2*x+1, 2*y)),
-                img.getpixel((2*x, 2*y+1)),
-                img.getpixel((2*x+1, 2*y+1))
-            ]
-            # mod 251 - so no errors
-            r = sum(p[0] for p in pixels) % 251
-            g = sum(p[1] for p in pixels) % 251
-            b = sum(p[2] for p in pixels) % 251
-            # Set the new pixel in the new image
-            new_img.putpixel((x, y), (r, g, b))
-
-            # redo the size
-            new_array_bits.append(pixels[0:r])
-
-    # Save the new image share over original
-    new_img.save(orig_image)
-    return half_width, half_height, new_array_bits
-    # return down_image, down_width, down_height
-'''
 
 
 # --- Downscale Image Method 2 ---
@@ -160,7 +125,6 @@ def downscale_image(inputImage, width_in, height_in,shareNo):
 
 # --- Function to reconstruct the secret using Lagrange function ---
 # SOURCE: https://github.com/cfgnunes/numerical-methods-python/blob/main/interpolation.py
-'''CHANGE THE VARIABLES - try subbing with above function'''
 def lagrange_calc_shamir(x, y, number_of_points, use_this_X):
     setupArray = [0] * number_of_points
     lagrange_out = 0
@@ -181,10 +145,7 @@ def lagrange_calc_shamir(x, y, number_of_points, use_this_X):
 
 # --- Function to reconstruct the original image using the shares ---
 # SOURCE: https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/
-'''CHANGE THE VARIALBES'''
 def decrypt_image_shamir(input_image, list_values, r, n):
-    # assert len(imgs) >= r
-    # x = index
     length_of_image = len(input_image[0])
     image_pixel_array= []
     for i in range(length_of_image):
@@ -212,6 +173,7 @@ def crop_output(imageInput):
 # --- Function to calculate our MAE ---
 def calc_mae_numpy(inputImage, pixelArrayValues):
     outputImageCv = cv2.imread(inputImage) # read image in from file
+    pixelArrayValues = np.array(pixelArrayValues) # added to see if this will more accurately look at mae
     outputMAE = np.mean(np.abs(outputImageCv - pixelArrayValues)) # use formula to find the 
     print(f"Output MAE: {outputMAE}")
     return outputMAE
@@ -234,7 +196,8 @@ def myLogo():
 # MAIN
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-# myLogo()
+myLogo()
+print("\n")
 
 # LET THE USER SET THESE with input
 # useThisImage = '3.bmp'
@@ -256,7 +219,7 @@ if wantDownscaleString == "yes":
 else:
     wantDownscale = False
 # print(f"Downscale = {wantDownscale}")
-# print('\n')
+print('\n')
 
 '''ENCRYPTION'''
 image_array_generated_output,shape,arr_bit,list_bit,downscaled_array_to_compare = split_image_shamir(useThisImage,wantDownscale,totalNumberOfShares,minNumberOfShares,max_value=250) # change r and n names
