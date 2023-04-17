@@ -132,12 +132,21 @@ def downscale_image_original(orig_image, width, height, shareNo):
 def downscale_image(inputImage, width_in, height_in,shareNo):
     print(f"Downscaling {shareNo} With OpenCV...")
     # print(f"Need to make the image: {(width_in//2)} by {(height_in//2)}")
-    cvImageOriginal = cv2.imread(inputImage) # needs to be black and white before using, but we have already taken care of that
+    
+    # needs to be black and white before using, but we have already taken care of that
+    cvImageOriginal = cv2.imread(inputImage)
+
+    # Get the dimensions of the image
     height, width, channels = cvImageOriginal.shape
-    half_height, half_width = int(height/2), int(width/2) # get the new dimensions for output image
-    downsampledcvImageOriginal = np.zeros((half_height, half_width, channels), dtype=np.uint8) # create new image, using new dimensions
-    # new_array_pixel_values = []
-    # average x4 pixels by going through them
+
+    # Downsize the image by two
+    half_height, half_width = int(height/2), int(width/2)
+
+    # Create a new image with the downsampled dimensions
+    downsampledcvImageOriginal = np.zeros((half_height, half_width, channels), dtype=np.uint8)
+
+    new_array_pixel_values = []
+    # Iterate over the downsampled image and average the neighboring pixels
     for i in range(half_height):
         for j in range(half_width):
             # Calculate the indices of the four neighboring pixels
@@ -152,7 +161,7 @@ def downscale_image(inputImage, width_in, height_in,shareNo):
             # Assign the new pixel value to the downsampled image
             downsampledcvImageOriginal[i, j] = pixel_value
 
-            # new_array_pixel_values.append(pixel_value)
+            new_array_pixel_values.append(pixel_value)
 
     # Save the downsampled image to a file and return the values
     cv2.imwrite(inputImage, downsampledcvImageOriginal)
@@ -201,23 +210,94 @@ def decrypt_image_shamir(input_image, list_values, r, n):
     return image_pixel_array
 
 
+# --- Function to decode downsized pics ---
+''' # DO WE NEED TWO DOWNSIZE FUNCTIONS????
+def decode_downsize(imgs, index, r, n):
+    # # you can also just re open up the share by passing in the name and get the dimensions that way
+
+    # Make sure there are enough shares to decode the image
+    if len(imgs) < r:
+        raise ValueError(f"Not enough shares to decode image (need {r}, got {len(imgs)})")
+    
+    # Calculate the width of the image
+    # img_width = len(imgs[0]) // 2
+    img_width = len(imgs[0])
+    
+    # Reconstruct the pixel values
+    img = []
+    # ITS RECONSTRUCTION!!!!
+    # for col_idx in range(0,img_width,2):
+    for col_idx in range(0,img_width):
+        shares_to_use = [imgs[share_idx][col_idx] for share_idx in range(r)]
+        pixel_value = shamir_lagrange_calc(index, shares_to_use, r, 0) % 251
+        # print(f"Print Pixel: {pixel_value}")
+        img.append(pixel_value)
+
+    # cut array in half, then start again
+
+    # get second half of pictures
+    # for col_idx in range(1,img_width-1,2):
+    #     shares_to_use = [imgs[share_idx][col_idx] for share_idx in range(r)]
+    #     pixel_value = lagrange(index, shares_to_use, r, 0) % 251
+    #     # print(f"Print Pixel: {pixel_value}")
+    #     img.append(pixel_value)
+
+    print("Image reconstruction complete!")
+    return img
+'''
 # --- Function to crop output for MAE ---
 # SOURCE: Cropping Images in Python With Pillow and OpenCV: https://cloudinary.com/guides/automatic-image-cropping/cropping-images-in-python-with-pillow-and-opencv
 def crop_output(imageInput):
-    image = Image.open(imageInput) # Open the image and get current dimensions
+    # Open the image file
+    image = Image.open(imageInput)
+
+    # Get the current dimensions of the image
     current_width, current_height = image.size
-    width = current_width // 2 # Set the dimensions for cropping to the upper left quarter & crop
+
+    # Set the dimensions for cropping to the upper left quarter
+    width = current_width // 2
     height = current_height // 2
+
+    # Crop the image
     cropped_image = image.crop((0, 0, width, height))
-    cropped_image.save(imageInput)# Save the cropped image
+
+    # Save the cropped image
+    cropped_image.save(imageInput)
 
 
-# --- Function to calculate our MAE ---
-def calc_mae_numpy(inputImage, pixelArrayValues):
-    outputImageCv = cv2.imread(inputImage) # read image in from file
-    outputMAE = np.mean(np.abs(outputImageCv - pixelArrayValues)) # use formula to find the 
+# --- Function to calculate the MAE ---
+def calculate_mae(resized_image,initial_resized_array):
+    print("Calculating MAE...")
+    outputImageCv = cv2.imread(resized_image) 
+    # outputImageCv = cv2.imread('image.png', cv2.IMREAD_UNCHANGED)
+    if outputImageCv.shape != initial_resized_array.shape:
+        outputImageCv.shape = cv2.resize(outputImageCv, initial_resized_array.shape[:2][::-1])
+
+    # Calculate the absolute difference between the images
+    diff = cv2.absdiff(outputImageCv, initial_resized_array)
+
+    # Convert the difference image to grayscale
+    gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+
+    # Calculate the mean value of the grayscale image
+    mae = np.mean(gray)
+
+    print("Our Mean Average Error is:", mae)
+
+
+# Function 2 for MAE
+def calc_mae_numpy(inputImage, pixels_s):
+    outputImageCv = cv2.imread(inputImage) 
+    outputMAE = np.mean(np.abs(outputImageCv - pixels_s))
     print(f"Output MAE: {outputMAE}")
     return outputMAE
+
+
+
+
+
+
+
 
 
 # --- Function to print out my Logo ---
@@ -261,27 +341,40 @@ if wantDownscale == False:
     img.save(f"{shape[1]}x{shape[0]}_{reconstructName}")
 else:
     '''DOWNSCALE'''
-    origin_img = decrypt_image_shamir(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
 
-    # pass in width and height, save output (width and height half) -- get it from the start of the project
+    # origin_img = decode_downsize(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
+    origin_img = decrypt_image_shamir(arr_bit, list_bit, minNumberOfShares, totalNumberOfShares)
+    # Save the decrypted image to a file
+
+    # pass in width and height
+    # save output (width and height half) -- get it from the start of the project
     half_values_array = origin_img[::2] # Get every second element starting from the first
+    # half_values_array = origin_img[::4]
+    # print(f"Length of List: {len(list(origin_img))}")
+    # print(f"Output Array is {len(origin_img)}")
+    # print(f"Expecting Array that is {shape[0]*shape[1]}")
+    # print(f"half values array has {len(half_values_array)}")
+
+    # newShapeDim = (len(half_values_array)+54)//320
     newShapeDim = (len(half_values_array))//320
     newShape = ((newShapeDim),(newShapeDim)) # only works with square shapes
-    # above is neccessary because we were getting too much info from the array, x2 number pixels
-    # every second number seemed to be a duplicate
+    # print(newShape)
 
-    img = Image.new("L", newShape, color=0) # save downscaled image with these dimensions
+    img = Image.new("L", newShape, color=0)
+
     img.putdata(list(half_values_array))
     img.save(f"{shape[1]}x{shape[0]}_{reconstructName}")
     crop_output(f"{shape[1]}x{shape[0]}_{reconstructName}")
     print('#------------#')
-
-
-
-    ''' CALC MAE '''
+    # --- MAE ---
     # uses original number array returned from downsize and then opens up output image to compare against
     # ASK PRADEEP IF YOU ARE DOING THIS RIGHT!!
+
+    # orig
+    calculate_mae(f"{shape[1]}x{shape[0]}_{reconstructName}",downscaled_array_to_compare)
+
+
     calc_mae_numpy(f"{shape[1]}x{shape[0]}_{reconstructName}",downscaled_array_to_compare)
-    # As MAE was only specified to be done for question 2, i did not include it for question 1
+
 
 
