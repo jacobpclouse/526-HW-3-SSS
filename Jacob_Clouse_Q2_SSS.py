@@ -68,7 +68,6 @@ def split_image_shamir(inputImage,downscaleBool,n,r,downscaleControl,max_value=N
     output_this = [Image.new("L", (width, height)) for _ in range(n)]
     for i, image_Out in enumerate(image_array_generated):
         output_this[i].putdata(image_Out)
-        # name_of_share = "share{}.bmp".format(i + 1)
         name_of_share = f"share{i + 1}.bmp"
         output_this[i].save(name_of_share)
         share_names.append(name_of_share)
