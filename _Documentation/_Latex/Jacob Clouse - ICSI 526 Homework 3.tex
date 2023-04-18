@@ -41,6 +41,7 @@
 \maketitle
 \tableofcontents
 \vspace{0.2in}
+\noindent NOTE: I did not attempt the optional Question 3
 \section{Question 1}
 \subsection{Trying to find secret values}
 % YOU NEED TO WORKOUT ALL ATTEPMTS TO REVERSE ENGINEER THIS AS AN ATTACKER
@@ -170,7 +171,7 @@ $526 \textrm{ mod } 31$ $\rightarrow$ \textbf{1}\\
 \vspace{0.15in}
 
 \noindent 1 = 1, but why? The reason lies with the operations that we performed on the data: addition and scalar division. \\
-We know that both addition and scalar division are supported homomorphic operations inside of Shamir's Secret Sharing sharing. They 
+We know that both addition and scalar division are supported homomorphic operations inside of Shamir's Secret Sharing sharing. These operations ensure that the image will be kept 'in proportion' so to speak. 
 \if false
 It is because we kept proportions using scalar multiplication (the inverse modulus 2 and the normal averaging of luna's shares). This ensured that we kept everything in line and got the same average in the end. 
 \fi
@@ -234,7 +235,7 @@ $4$
 \newline
 
 \vspace{0.1in}
-\noindent The reason is because full, non-scalar multiplication is NOT supported within Shamir's Secret Sharing. Scalar multiplication would have been supported (scalar multiplication is multiplying by a constant). Because we are multiplying each share against each other (and NOT a constant), this is full multiplication and it will work. \\
+\noindent The reason is because full, non-scalar multiplication is NOT supported within Shamir's Secret Sharing. Scalar multiplication would have been supported (scalar multiplication is multiplying by a constant). Because we are multiplying each share against each other (and NOT a constant), this is full multiplication and it will NOT work (things will not be 'kept in proportion' so to speak).\\
 
 \if false
 \noindent These are not the same and this is because we didn't maintain the proportions with scalar multiplication (like we did in 1.2). This means that the aspects haven't been preserved by homomorphism. 
@@ -247,6 +248,9 @@ $4$
 
 \vspace{0.2in}
 \section{Question 2}
+\subsection{Youtube Presentation Video Link}
+\noindent My youtube video is live at: \textbf{https://youtu.be/uT2ZnAfslW8}
+
 \subsection{How to Run My Shamir Secret Sharing program (Non-Downscaling) } 
 \noindent This will encrypt and decrypt the input image WITHOUT changing the dimensions of the output. It is hard coded to make a (2,5) cipher with 5 total shares and 2 required shares to reconstruct. \\ Instructions: 
 \begin{enumerate}
