@@ -1,5 +1,5 @@
 # 526-HW-3-SSS
-ICSI 526 Homework 3 - Spring 2023 - Shamir Secret Sharing
+ICSI 526 Homework 3 - Spring 2023 - Shamir Secret Sharing -- video walkthrough here: https://youtu.be/uT2ZnAfslW8
 
 # INFO:
 If you read an image as a byte stream, it reads the header file
